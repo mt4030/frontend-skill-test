@@ -5,38 +5,16 @@ import { useGames } from '@/providers/context'
 import { useRouter } from 'next/navigation'
 import Dropdown from './dropdown'
 import Link from 'next/link'
-
-export interface Genre {
-  id: number
-  slug: string
-  name: string
-}
-
-export interface Platform {
-  id: number
-  slug: string
-  name: string
-}
-
-export interface Tag {
-  id: number
-  slug: string
-  name: string
-}
+import { Genre, Platform, Tag, Filters, Game } from '@/lib/type';
 
 interface AdvancedGameFilterProps {
-  initialGenres?: string[]
-  initialPlatforms?: string[]
-  initialTags?: string[]
-  initialSearch?: string
-  onChange: (filters: {
-    searchTerm: string
-    selectedGenres: Genre[]
-    selectedPlatforms: Platform[]
-    selectedTags: Tag[]
-    itemsPerPage: number
-  }) => void
+  initialGenres?: string[];
+  initialPlatforms?: string[];
+  initialTags?: string[];
+  initialSearch?: string;
+  onChange: (filters: Filters) => void;
 }
+
 
 export default function AdvancedGameFilter({
   initialGenres = [],
@@ -49,7 +27,7 @@ export default function AdvancedGameFilter({
   const router = useRouter()
 
   const [searchTerm, setSearchTerm] = useState(initialSearch)
-  const [liveSearchResults, setLiveSearchResults] = useState<typeof games>([])
+  const [liveSearchResults, setLiveSearchResults] = useState<Game[]>([])
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
   const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>([])
   const [selectedTags, setSelectedTags] = useState<Tag[]>([])

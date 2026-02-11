@@ -5,39 +5,12 @@ import {
   useContext,
   useState,
   useEffect,
-  ReactNode,
   useCallback,
 } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMe } from '@/hooks/useMe';
 import { fetchGames } from '../lib/api-calls';
-
-
-// ================= TYPES =================
-
-interface Game {
-  id: number;
-  name: string;
-  background_image: string;
-  released: string;
-  rating: number;
-}
-
-interface GameContextType {
-  games: Game[];
-  isLoading: boolean;
-  error: string | null;
-
-  favorite: number[];
-  bookmark: number[];
-
-  handleBookmark: (gameId: number) => void;
-  handleFavorite: (gameId: number) => void;
-}
-
-interface GameProviderProps {
-  children: ReactNode;
-}
+import { Game, GameContextType,GameProviderProps } from "@/lib/type"
 
 
 // ================= CONTEXT =================

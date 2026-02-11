@@ -36,7 +36,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col md:flex-row">
       {/* Sidebar */}
-      <aside className="w-full md:w-60 bg-gray-950 p-6 flex-shrink-0">
+      <aside className="w-full md:w-60 bg-gray-950 p-6 shrink-0">
         <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
         <p className="mb-2">Welcome, {user.firstName || "Gamer"}!</p>
         <p className="mb-6 text-gray-400">{games.length} games available</p>

@@ -1,11 +1,12 @@
-'use client'
+'use client' 
 
 import { useState, useMemo, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import AdvancedGameFilter, { Genre, Platform, Tag } from '@/app/components/advSearch/advanceSearch'
+import { Genre, Platform, Tag } from '@/lib/type'
 import { useGames } from '@/providers/context'
+import AdvancedGameFilter from '@/app/components/advSearch/advanceSearch'
 
-export default function ResultsContent() {
+export default function ResultsPage() {
   const { games } = useGames()
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -41,55 +42,48 @@ export default function ResultsContent() {
   const filteredGames = useMemo(() => {
     let result = [...games]
 
-    // Filter by search term
     if (filters.searchTerm.trim()) {
       const term = filters.searchTerm.toLowerCase()
       result = result.filter(g => g.name.toLowerCase().includes(term))
     }
 
-    // Filter by genres (game must have ALL selected genres)
     if (filters.selectedGenres.length > 0) {
       result = result.filter(game => {
-        const gameGenreSlugs = game.genres?.map((g: any) => g.slug) || []
-        return filters.selectedGenres.every(selectedGenre => 
+        const gameGenreSlugs = game.genres?.map((g: Genre) => g.slug) || []
+        return filters.selectedGenres.every(selectedGenre =>
           gameGenreSlugs.includes(selectedGenre.slug)
         )
       })
     }
 
-    // Filter by platforms (game must have at least one selected platform)
     if (filters.selectedPlatforms.length > 0) {
       result = result.filter(game => {
-        const gamePlatformSlugs = game.platforms?.map((p: any) => p.platform.slug) || []
-        return filters.selectedPlatforms.some(selectedPlatform => 
+        const gamePlatformSlugs = game.platforms?.map(p => p.platform.slug) || []
+        return filters.selectedPlatforms.some(selectedPlatform =>
           gamePlatformSlugs.includes(selectedPlatform.slug)
         )
       })
     }
 
-    // Filter by tags (game must have at least one selected tag)
     if (filters.selectedTags.length > 0) {
       result = result.filter(game => {
-        const gameTagSlugs = game.tags?.map((t: any) => t.slug) || []
-        return filters.selectedTags.some(selectedTag => 
+        const gameTagSlugs = game.tags?.map((t: Tag) => t.slug) || []
+        return filters.selectedTags.some(selectedTag =>
           gameTagSlugs.includes(selectedTag.slug)
         )
       })
     }
 
-    // Return only the requested number of items
     return result.slice(0, filters.itemsPerPage)
   }, [filters, games])
 
-  const handleFiltersChange = (newValues: { 
+  const handleFiltersChange = (newValues: {
     searchTerm: string
     selectedGenres: Genre[]
     selectedPlatforms: Platform[]
     selectedTags: Tag[]
-    itemsPerPage: number 
-  }) => {
-    setFilters(newValues)
-  }
+    itemsPerPage: number
+  }) => setFilters(newValues)
 
   return (
     <div className="max-w-7xl mx-auto p-4">
@@ -113,7 +107,7 @@ export default function ResultsContent() {
               href={`/products/${game.id}`} 
               className="group bg-gray-800 rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.04] hover:shadow-xl hover:shadow-amber-900/30"
             >
-              <div className="relative aspect-[4/3] overflow-hidden">
+              <div className="relative aspect-4/3 overflow-hidden">
                 <img 
                   src={game.background_image} 
                   alt={game.name} 
@@ -129,7 +123,7 @@ export default function ResultsContent() {
                 </h3>
                 {game.genres && game.genres.length > 0 && (
                   <p className="text-xs text-gray-400 mt-2">
-                    {game.genres.slice(0, 2).map((g: any) => g.name).join(', ')}
+                    {game.genres.slice(0, 2).map(g => g.name).join(', ')}
                   </p>
                 )}
               </div>

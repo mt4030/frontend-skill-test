@@ -15,7 +15,7 @@ const GenrePage = ({ params }: PageProps) => {
   
   // Filter games based on the selected genre
   const genreGames = games.filter(game =>
-    game.genres.some((g: any) => g.slug === genre)
+    game.genres?.some((g: any) => g.slug === genre)
   );
 
   // Pagination Logic

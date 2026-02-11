@@ -13,7 +13,6 @@ import SiteIcon from "../siteicon"
 const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isAvatarOpen, setIsAvatarOpen] = useState(false)
-
   const { data: user } = useMe()
   const queryClient = useQueryClient()
   const router = useRouter()
@@ -22,7 +21,6 @@ const NavBar = () => {
     { id: 1, name: "Home", path: "/" },
     { id: 2, name: "Games", path: "/products" },
   ]
-
   const onLogout = () => {
     localStorage.removeItem("token")
     queryClient.setQueryData(["me"], null)

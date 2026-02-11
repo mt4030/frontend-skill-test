@@ -2,32 +2,20 @@
 
 import GameCarousel from './gamesCarousel';
 import Link from 'next/link';
-
-interface Game {
-  id: number;
-  slug: string;
-  name: string;
-  released: string;
-  tba: boolean;
-  background_image: string;
-  rating: number;
-  rating_top: number;
-  ratings: any;
-  ratings_count: number;
-  reviews_text_count: string;
-  added: number;
-  added_by_status: any;
-  metacritic: number;
-  playtime: number;
-  suggestions_count: number;
-  updated: string;
-
+import { Game, Genre } from '@/lib/type'
+interface GameListProps {
+  gamesList: Game[]
 }
 
+interface GenreMapItem {
+  id: number
+  name: string
+  games: Game[]
+}
 
-const GameList = ({ gamesList }) => {
+const GameList: React.FC<GameListProps> = ({ gamesList }) => {
   // 1️⃣ Get all unique genres
-  const genreMap: Record<string, { id: number; name: string; games: Game[] }> = {};
+  const genreMap: Record<string, GenreMapItem> = {};
 
   gamesList.forEach((game:any) => {
     game.genres.forEach((genre:any) => {

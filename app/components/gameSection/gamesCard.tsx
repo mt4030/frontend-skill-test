@@ -1,7 +1,12 @@
 
 import { Card, CardContent } from "@/components/ui/card"
+import { Game } from '@/lib/type'
 interface GameCardProps {
-  game: any;
+  game: Game;
+   isFavorite?: boolean;       // optional
+  isBookmarked?: boolean;     // optional
+  onFavorite?: () => void;    // optional
+  onBookmark?: () => void;    // optional
 }
 import Link from "next/link";
 const GameCard=({ game }: GameCardProps)=>{

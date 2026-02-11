@@ -8,7 +8,7 @@ import Loading from "./components/Loading";
 
 export default function Home() {
   const { games, isLoading, error } = useGames();
-  const [isDataReady, setIsDataReady] = useState(false);
+  const [isDataReady, setIsDataReady] = useState<boolean>(false);
 
   // Simulating data fetch state
   useEffect(() => {

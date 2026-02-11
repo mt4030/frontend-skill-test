@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import GameCard from "../components/gameSection/gamesCard";
 import { useGames } from '@/providers/context';
+import { Game } from '@/lib/type';
 
 const Products = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,7 +40,7 @@ const Products = () => {
   return (
     <section className="p-10 lg:px-50 bg-gray-900 min-h-screen">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-6">
-        {currentProducts.map((game: any) => (
+        {currentProducts.map((game: Game) => (
           <GameCard key={game.id} game={game} />
         ))}
       </div>

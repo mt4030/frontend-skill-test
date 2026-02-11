@@ -7,9 +7,9 @@ import {
   CarouselPrevious,
 } from "@/app/components/ui/carousel"
 import GameCard from "./gamesCard"
-
+import { Game } from '@/lib/type'
 interface gameCarouselProps {
-  gamesList: any[]
+  gamesList: Game[]
 }
 
 export default function GameCarousel({gamesList}: gameCarouselProps) {
