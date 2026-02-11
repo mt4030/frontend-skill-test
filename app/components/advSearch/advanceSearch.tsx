@@ -134,7 +134,7 @@ export default function AdvancedGameFilter({
   }
 
   return (
-    <div className="text-white p-4 max-w-7xl mx-auto bg-gray-950 mt-20 rounded-3xl">
+    <div className="text-white p-4  w-half md:mx-20 mx-2  bg-gray-950 mt-10 mb-20 rounded-3xl ">
       {/* SEARCH INPUT */}
       <div className="relative">
         <input
@@ -217,7 +217,7 @@ export default function AdvancedGameFilter({
       <div className="mt-4">
         <button
           onClick={handleFilterSearch}
-          className="w-full md:w-auto px-8 py-3 rounded bg-amber-500 text-black hover:bg-amber-400 font-medium transition"
+          className="w-full px-8 py-3 rounded bg-amber-500 text-black hover:bg-amber-400 font-medium transition"
         >
           Apply Filters
         </button>

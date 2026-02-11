@@ -1,83 +1,122 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import GameCard from "../components/gameSection/gamesCard";
-import { mockGames } from "@/app/data/mockgames";
 import { useMe } from "@/hooks/useMe";
+import { useGames } from "@/providers/context";
 
 export default function Dashboard() {
-  const { data: user, isLoading } = useMe(); // get logged-in user
   const router = useRouter();
 
-  // --- Handle logout ---
-  const handleLogout = async () => {
-    localStorage.removeItem("token"); // clear token
-    router.push("/"); // redirect to home
-  };
+  // Hooks always run first
+  const { data: user, isLoading } = useMe();
+  const { games, favorite, bookmark, handleFavorite, handleBookmark } = useGames();
 
-  if (isLoading) return <p className="text-white p-4">Loading...</p>;
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.replace("/login");
+    }
+  }, [isLoading, user, router]);
 
-  if (!user)
+  // While loading or redirecting, render a loader
+  if (isLoading || !user) {
     return (
-      <div className="text-white p-4">
-        You are not logged in. <br />
-        <button
-          className="mt-2 px-4 py-2 bg-amber-500 text-black rounded hover:bg-amber-400"
-          onClick={() => router.push("/")}
-        >
-          Go Home
-        </button>
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Loading...
       </div>
     );
+  }
 
-  // Map user bookmarks/favorites to actual games
-  const bookmarkedGames = mockGames.filter((g) =>
-    user.bookmarks?.includes(g.id)
-  );
-  const favoriteGames = mockGames.filter((g) =>
-    user.favorites?.includes(g.id)
-  );
+  // Filter games for user bookmarks/favorites
+  const bookmarkedGames = games.filter((g) => bookmark.includes(g.id));
+  const favoriteGames = games.filter((g) => favorite.includes(g.id));
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Welcome, {user.name}</h1>
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col md:flex-row">
+      {/* Sidebar */}
+      <aside className="w-full md:w-60 bg-gray-950 p-6 flex-shrink-0">
+        <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
+        <p className="mb-2">Welcome, {user.firstName || "Gamer"}!</p>
+        <p className="mb-6 text-gray-400">{games.length} games available</p>
         <button
-          onClick={handleLogout}
-          className="px-4 py-2 bg-amber-500 text-black rounded hover:bg-amber-400"
+          onClick={() => router.push("/")}
+          className="mb-4 w-full px-4 py-2 bg-amber-500 text-black rounded hover:bg-amber-400"
+        >
+          Home
+        </button>
+        <button
+          onClick={() => router.push("/profile")}
+          className="mb-4 w-full px-4 py-2 bg-gray-800 border border-amber-500 text-amber-300 rounded hover:bg-amber-400 hover:text-black"
+        >
+          Profile
+        </button>
+        <button
+          onClick={() => {
+            localStorage.removeItem("token");
+            router.push("/");
+          }}
+          className="w-full px-4 py-2 bg-red-600 text-black rounded hover:bg-red-500"
         >
           Logout
         </button>
-      </div>
+      </aside>
 
-      {/* Bookmarks row */}
-      <section className="mb-10">
-        <h2 className="text-xl font-semibold mb-4">Bookmarked Games</h2>
-        {bookmarkedGames.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {bookmarkedGames.map((game) => (
-              <GameCard key={game.id} game={game} />
-            ))}
+      {/* Main Content */}
+      <main className="flex-1 p-6 space-y-10">
+        {/* Bookmarks */}
+        <section>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold">Bookmarked Games</h3>
+            <span className="text-gray-400 text-sm">
+              {bookmarkedGames.length} {bookmarkedGames.length === 1 ? "game" : "games"}
+            </span>
           </div>
-        ) : (
-          <p className="text-gray-400">No bookmarked games yet.</p>
-        )}
-      </section>
+          {bookmarkedGames.length === 0 ? (
+            <p className="text-gray-400">You haven't bookmarked any games yet.</p>
+          ) : (
+            <div className="flex space-x-4 overflow-x-auto py-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
+              {bookmarkedGames.map((game) => (
+                <GameCard
+                  key={game.id}
+                  game={game}
+                  isFavorite={favorite.includes(game.id)}
+                  isBookmarked={true}
+                  onFavorite={() => handleFavorite(game.id)}
+                  onBookmark={() => handleBookmark(game.id)}
+                />
+              ))}
+            </div>
+          )}
+        </section>
 
-      {/* Favorites row */}
-      <section className="mb-10">
-        <h2 className="text-xl font-semibold mb-4">Favorite Games</h2>
-        {favoriteGames.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {favoriteGames.map((game) => (
-              <GameCard key={game.id} game={game} />
-            ))}
+        {/* Favorites */}
+        <section>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold">Favorite Games</h3>
+            <span className="text-gray-400 text-sm">
+              {favoriteGames.length} {favoriteGames.length === 1 ? "game" : "games"}
+            </span>
           </div>
-        ) : (
-          <p className="text-gray-400">No favorite games yet.</p>
-        )}
-      </section>
+          {favoriteGames.length === 0 ? (
+            <p className="text-gray-400">You haven't marked any favorites yet.</p>
+          ) : (
+            <div className="flex space-x-4 overflow-x-auto py-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
+              {favoriteGames.map((game) => (
+                <GameCard
+                  key={game.id}
+                  game={game}
+                  isFavorite={true}
+                  isBookmarked={bookmark.includes(game.id)}
+                  onFavorite={() => handleFavorite(game.id)}
+                  onBookmark={() => handleBookmark(game.id)}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }

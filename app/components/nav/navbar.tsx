@@ -1,20 +1,18 @@
 'use client'
-
 import Link from "next/link"
 import { useState } from "react"
-import { Search, ChevronDown } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 import { useMe } from "@/hooks/useMe"
 import { useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { toast } from "react-toastify"
 import NavSearch from "./navsearch"
 import { Avatarprofil } from "../avatar"
+import SiteIcon from "../siteicon"
 
 const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isAvatarOpen, setIsAvatarOpen] = useState(false)
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [searchName, setSearchName] = useState("")
 
   const { data: user } = useMe()
   const queryClient = useQueryClient()
@@ -40,24 +38,13 @@ const NavBar = () => {
       <div className="hidden md:flex w-full items-center">
 
         {/* Left */}
-        <div className="flex-1">
-         
-          <img src="/img/icon.png" alt="Website Icon" className="h-14" />
-        </div>
+     <SiteIcon/>
 
         {/* Center */}
-        <div className="flex-1 flex justify-center relative">
-          <Search
-            onClick={() => setIsSearchOpen(prev => !prev)}
-            className="w-6 h-6 cursor-pointer"
-          />
+    
+        <NavSearch/>
 
-          <NavSearch
-            searchName={searchName}
-            setSearchName={setSearchName}
-            isOpen={isSearchOpen}
-          />
-        </div>
+       
 
         {/* Right */}
         <div className="flex-1 flex justify-end items-center gap-10">
@@ -111,12 +98,6 @@ const NavBar = () => {
 
         <img src="/img/icon.png" alt="Website Icon" className="h-12" />
 
-        <div className="flex items-center gap-4">
-          <Search
-            onClick={() => setIsSearchOpen(prev => !prev)}
-            className="w-6 h-6 cursor-pointer"
-          />
-
           <button onClick={() => setIsMobileMenuOpen(prev => !prev)}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -129,12 +110,7 @@ const NavBar = () => {
           </button>
         </div>
 
-        <NavSearch
-          searchName={searchName}
-          setSearchName={setSearchName}
-          isOpen={isSearchOpen}
-        />
-      </div>
+    
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
@@ -157,6 +133,7 @@ const NavBar = () => {
           ) : (
             <Link href="/login">Login</Link>
           )}
+             <NavSearch/>
         </ul>
       )}
     </nav>

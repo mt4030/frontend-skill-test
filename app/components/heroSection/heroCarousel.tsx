@@ -24,9 +24,14 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ gamesList  }) => {
  <div className="absolute inset-0 bg-linear-to-r from-black/90 to-black/20"></div>
 
 </div>
-<Link href={`/products/${game.id}`} className="absolute bottom-1/4 left-50">
+<Link href={`/products/${game.id}`} className="absolute md:bottom-1/4 md:left-50 bottom-1/5 left-20 ">
   <div className="flex items-center gap-10">
-     <Play className="w-12 h-12 text-white opacity-50 hover:text-red-500" />
+  <img
+      src={game.background_image}
+      alt={game.name}
+      className="w-25 h-25 rounded-full object-cover" // Small thumbnail style
+    />
+   
     <span className="text-white text-xl font-bold hover:text-yellow-500">
       {game.name}
     </span>

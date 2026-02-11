@@ -1191,3 +1191,1515 @@ export default NavBar
 i tested and got it i must have use one of the doc defult not on my own
 how to make https://ui.shadcn.com/docs/components/radix/pagination to a page of all products a grid of 9col 3 row and  navigating page with pagination  
 teach me dont just give me a code
+
+why here fotter come up and there is empty space at button how to correct it :'use client'
+
+import { useEffect, useState } from "react";
+import { use } from 'react';
+import { useGames } from '@/providers/context';
+import GameCard from '@/app/components/gameSection/gamesCard'; // Assuming GameCard is your individual game card component
+
+interface PageProps {
+  params: Promise<{ genre: string }>;
+}
+
+const GenrePage = ({ params }: PageProps) => {
+  const { games } = useGames();
+  const { genre } = use(params);
+  
+  // Filter games based on the selected genre
+  const genreGames = games.filter(game =>
+    game.genres.some((g: any) => g.slug === genre)
+  );
+
+  // Pagination Logic
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15; // Show 15 items per page
+  const totalPages = Math.ceil(genreGames.length / itemsPerPage);
+
+  // Slice products for the current page
+  const currentProducts = genreGames.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Scroll to top on page change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
+
+  // Pagination functions
+  const goPrev = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const goNext = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
+  return (
+    <div className="flex flex-col justify-between   bg-gray-950 px-10 pt-20">
+      <h1 className="text-3xl font-bold text-amber-50 capitalize mb-6">
+        {genre.replace('-', ' ')}
+      </h1>
+
+      {/* Grid Layout for the current page's games */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        {currentProducts.map((game: any) => (
+          <GameCard key={game.id} game={game} />
+        ))}
+      </div>
+
+      {/* Pagination controls */}
+      <div className="flex justify-center items-center gap-2 mt-6">
+        <button
+          className="px-3 py-1 bg-gray-700 cursor-pointer text-white rounded hover:bg-gray-600"
+          onClick={goPrev}
+          disabled={currentPage === 1}
+        >
+          Prev
+        </button>
+
+        <button
+          className="px-3 py-1 bg-gray-700 cursor-pointer text-white rounded hover:bg-gray-600"
+          onClick={goNext}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default GenrePage;
+
+The issue where the footer comes up and there's empty space at the bottom is likely due to the fact that you're not setting the minimum height of the container to fill the screen, and it's leaving extra space when the content doesn't fully fill the height of the viewport.
+
+To correct this, you can modify the container's style to ensure that it takes up the full height of the viewport and stretches properly.
+
+Here's how you can update the styles:
+
+Use min-h-screen on the container to make sure it fills the entire viewport height.
+
+Adjust the flex container to stretch its content correctly.
+
+Corrected Code:
+'use client'
+
+import { useEffect, useState } from "react";
+import { use } from 'react';
+import { useGames } from '@/providers/context';
+import GameCard from '@/app/components/gameSection/gamesCard'; // Assuming GameCard is your individual game card component
+
+interface PageProps {
+  params: Promise<{ genre: string }>;
+}
+
+const GenrePage = ({ params }: PageProps) => {
+  const { games } = useGames();
+  const { genre } = use(params);
+  
+  // Filter games based on the selected genre
+  const genreGames = games.filter(game =>
+    game.genres.some((g: any) => g.slug === genre)
+  );
+
+  // Pagination Logic
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15; // Show 15 items per page
+  const totalPages = Math.ceil(genreGames.length / itemsPerPage);
+
+  // Slice products for the current page
+  const currentProducts = genreGames.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Scroll to top on page change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
+
+  // Pagination functions
+  const goPrev = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const goNext = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen bg-gray-950 px-10 pt-20">
+      <h1 className="text-3xl font-bold text-amber-50 capitalize mb-6">
+        {genre.replace('-', ' ')}
+      </h1>
+
+      {/* Grid Layout for the current page's games */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        {currentProducts.map((game: any) => (
+          <GameCard key={game.id} game={game} />
+        ))}
+      </div>
+
+      {/* Pagination controls */}
+      <div className="flex justify-center items-center gap-2 mt-6">
+        <button
+          className="px-3 py-1 bg-gray-700 cursor-pointer text-white rounded hover:bg-gray-600"
+          onClick={goPrev}
+          disabled={currentPage === 1}
+        >
+          Prev
+        </button>
+
+        <button
+          className="px-3 py-1 bg-gray-700 cursor-pointer text-white rounded hover:bg-gray-600"
+          onClick={goNext}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default GenrePage;
+
+Key Changes:
+
+min-h-screen added to the outer div: This ensures that the container will at least fill the height of the viewport. If the content is smaller than the screen, the container will stretch to fill the screen.
+
+<div className="flex flex-col min-h-screen bg-gray-950 px-10 pt-20">
+
+
+Padding adjustments: I kept your existing padding and margin styles, so everything remains spaced nicely.
+
+This should solve the issue of the footer appearing too soon and the empty space at the bottom of the page. Now, the page will always take up the full height of the screen and the footer will be pushed to the bottom, only appearing once the content has been loaded completely.
+create a game one game page its when we clic on card of game and it goeas to its page -create base on this response give as much as posible {
+  "count": 0,
+  "next": "http://example.com",
+  "previous": "http://example.com",
+  "results": [
+    {
+      "id": 0,
+      "slug": "string",
+      "name": "string",
+      "released": "2026-02-11",
+      "tba": true,
+      "background_image": "http://example.com",
+      "rating": 0,
+      "rating_top": 0,
+      "ratings": {},
+      "ratings_count": 0,
+      "reviews_text_count": "string",
+      "added": 0,
+      "added_by_status": {},
+      "metacritic": 0,
+      "playtime": 0,
+      "suggestions_count": 0,
+      "updated": "2026-02-11T10:06:33Z",
+      "esrb_rating": {
+        "id": 0,
+        "slug": "everyone",
+        "name": "Everyone"
+      },
+      "platforms": [
+        {
+          "platform": {
+            "id": 0,
+            "slug": "string",
+            "name": "string"
+          },
+          "released_at": "string",
+          "requirements": {
+            "minimum": "string",
+            "recommended": "string"
+          }
+        }
+      ]
+    }
+  ]
+} ?----import { useGames } from '@/providers/context';
+import Image from "next/image";
+import { Heart, Bookmark, Play } from "lucide-react";
+interface ProductPageProps {
+  params: { id: string };
+}
+
+this is my previous design i like it :import { useGames } from '@/providers/context';
+import Image from "next/image";
+import { Heart, Bookmark, Play } from "lucide-react";
+interface ProductPageProps {
+  params: { id: string };
+}
+
+const ProductPage = async ({ params }: ProductPageProps) => {
+   const { id } = await params;
+  const gameId = Number(id);
+  const { games, isLoading, error } = useGames();
+  const game = games.find(g => g.id === gameId);
+
+  if (!game) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Game not found
+      </div>
+    );
+  }
+ const handleProtectedAction = () => {
+
+  };
+  return (
+<section className="relative bg-gray-900 min-h-screen text-white pb-10">
+      {/* Background */}
+      <div
+        className="h-[60vh] bg-cover bg-center"
+        style={{ backgroundImage: url(${game.background_image}) }}
+      />
+      <div className="absolute inset-0">
+  {/* smooth cinematic fade */}
+  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/90 to-transparent" />
+
+  {/* extra dark punch ONLY on bottom 40% */}
+  <div className="absolute bottom-0 h-[40%] w-full bg-gradient-to-t from-black to-transparent" />
+</div>
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4 md:-mt-60 -mt-93 ">
+        <div className="flex flex-col md:flex-row gap-10">
+          {/* Poster */}
+          <Image
+            src={game.background_image}
+            alt={game.name}
+            width={420}
+            height={520}
+            className="w-35 md:w- rounded-xl shadow-2xl"
+          />
+
+          {/* Info */}
+          <div className="flex flex-col gap-4 flex-1">
+            <h1 className="text-3xl md:text-4xl font-bold">
+              {game.name}
+            </h1>
+
+         
+            <div className="flex flex-wrap gap-2">
+              {game.map(g => (
+                <span
+                  key={g.slug}
+                  className="px-3 py-1 text-xs rounded-full bg-amber-500/20 text-amber-400"
+                >
+                  {g.name}
+                </span>
+              ))}
+            </div>
+
+            <p className="text-gray-300 leading-relaxed">
+              {}
+            </p>
+
+            <div className="flex flex-wrap gap-6 text-sm text-gray-400">
+              <span>{game.released}</span>
+              <span>⭐ {game.rating}</span>
+           
+            </div>
+
+            {/* ACTION BUTTONS */}
+            <div className="flex flex-wrap gap-4 mt-4">
+             
+
+              {/* Favorite */}
+              <button
+               
+                className="inline-flex items-center gap-2 border border-gray-500 px-6 py-2 rounded hover:bg-gray-800 transition"
+              >
+                <Heart size={18} />
+                Favorite
+              </button>
+
+              {/* Bookmark */}
+              <button
+               
+                className="inline-flex items-center gap-2 border border-gray-500 px-6 py-2 rounded hover:bg-gray-800 transition"
+              >
+                <Bookmark size={18} />
+                Bookmark
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default ProductPage;
+
+Alright Mohsen, I see what you want: a game listing page with clickable cards that go to the detailed game page you already designed. I’ll give you a full base implementation using your existing design style, Next.js, and useGames context. I’ll make it dynamic so it works with your API response format.
+
+1️⃣ GameCard.tsx – The clickable card component
+import Image from "next/image";
+import Link from "next/link";
+import { Heart, Bookmark, Play } from "lucide-react";
+
+interface GameCardProps {
+  id: number;
+  name: string;
+  background_image: string;
+  rating: number;
+}
+
+const GameCard = ({ id, name, background_image, rating }: GameCardProps) => {
+  return (
+    <Link href={`/games/${id}`} className="group">
+      <div className="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
+        <Image
+          src={background_image || "/placeholder.png"}
+          alt={name}
+          width={400}
+          height={225}
+          className="w-full h-56 object-cover"
+        />
+        <div className="p-4 flex flex-col gap-2">
+          <h2 className="text-lg font-bold text-white">{name}</h2>
+          <span className="text-sm text-gray-400">⭐ {rating}</span>
+
+          <div className="flex gap-2 mt-2">
+            <button className="flex items-center gap-1 text-gray-400 hover:text-red-400 transition">
+              <Heart size={16} /> Favorite
+            </button>
+            <button className="flex items-center gap-1 text-gray-400 hover:text-amber-400 transition">
+              <Bookmark size={16} /> Bookmark
+            </button>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+};
+
+export default GameCard;
+
+2️⃣ GamesPage.tsx – List all games
+"use client";
+
+import { useGames } from "@/providers/context";
+import GameCard from "./GameCard";
+
+const GamesPage = () => {
+  const { games, isLoading, error } = useGames();
+
+  if (isLoading) return <p className="text-white">Loading games...</p>;
+  if (error) return <p className="text-red-500">Error loading games</p>;
+
+  return (
+    <section className="min-h-screen bg-gray-900 text-white py-10 px-4 max-w-7xl mx-auto">
+      <h1 className="text-3xl font-bold mb-8">Games</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {games.map(game => (
+          <GameCard
+            key={game.id}
+            id={game.id}
+            name={game.name}
+            background_image={game.background_image}
+            rating={game.rating}
+          />
+        ))}
+      </div>
+    </section>
+  );
+};
+
+export default GamesPage;
+
+3️⃣ ProductPage.tsx – Your detailed game page (slightly fixed)
+
+I cleaned the game.map part because game is a single object, not an array.
+
+import { useGames } from "@/providers/context";
+import Image from "next/image";
+import { Heart, Bookmark } from "lucide-react";
+
+interface ProductPageProps {
+  params: { id: string };
+}
+
+const ProductPage = ({ params }: ProductPageProps) => {
+  const { id } = params;
+  const gameId = Number(id);
+  const { games } = useGames();
+
+  const game = games.find(g => g.id === gameId);
+
+  if (!game) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Game not found
+      </div>
+    );
+  }
+
+  return (
+    <section className="relative bg-gray-900 min-h-screen text-white pb-10">
+      <div
+        className="h-[60vh] bg-cover bg-center"
+        style={{ backgroundImage: `url(${game.background_image})` }}
+      />
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/90 to-transparent" />
+        <div className="absolute bottom-0 h-[40%] w-full bg-gradient-to-t from-black to-transparent" />
+      </div>
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4 md:-mt-60 -mt-93">
+        <div className="flex flex-col md:flex-row gap-10">
+          <Image
+            src={game.background_image}
+            alt={game.name}
+            width={420}
+            height={520}
+            className="w-35 md:w- rounded-xl shadow-2xl"
+          />
+
+          <div className="flex flex-col gap-4 flex-1">
+            <h1 className="text-3xl md:text-4xl font-bold">{game.name}</h1>
+
+            <div className="flex flex-wrap gap-2">
+              {game.platforms.map(p => (
+                <span
+                  key={p.platform.id}
+                  className="px-3 py-1 text-xs rounded-full bg-amber-500/20 text-amber-400"
+                >
+                  {p.platform.name}
+                </span>
+              ))}
+            </div>
+
+            <div className="text-gray-300 leading-relaxed mt-2">
+              Released: {game.released} | ESRB: {game.esrb_rating.name}
+            </div>
+
+            <div className="flex flex-wrap gap-6 text-sm text-gray-400 mt-2">
+              <span>⭐ {game.rating}</span>
+              <span>Playtime: {game.playtime} hrs</span>
+            </div>
+
+            <div className="flex flex-wrap gap-4 mt-4">
+              <button className="inline-flex items-center gap-2 border border-gray-500 px-6 py-2 rounded hover:bg-gray-800 transition">
+                <Heart size={18} /> Favorite
+              </button>
+              <button className="inline-flex items-center gap-2 border border-gray-500 px-6 py-2 rounded hover:bg-gray-800 transition">
+                <Bookmark size={18} /> Bookmark
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default ProductPage;
+
+
+✅ Now you have:
+
+GamesPage → shows all games in a grid.
+
+GameCard → clickable card linking to /games/:id.
+
+ProductPage → detailed page for each game.
+
+Corrected your previous code errors (like mapping over a single object).
+
+If you want, I can take it one step further and add dynamic SEO-friendly slugs, animated hover effects, and preloading images for smooth transitions so it feels more cinematic like your previous page design.
+
+Do you want me to do that next?
+i have 2 goals one to fetch games and save it to localstorage 2 live search through database and save it to history state or fav or book if user did bookmark it games
+Get a list of games.
+query Parameters
+page	
+integer
+A page number within the paginated result set.
+
+page_size	
+integer
+Number of results to return per page.
+
+search	
+string
+Search query.
+
+search_precise	
+boolean
+Disable fuzziness for the search query.
+
+search_exact	
+boolean
+Mark the search query as exact.
+
+parent_platforms	
+string
+Filter by parent platforms, for example: 1,2,3.
+
+platforms	
+string
+Filter by platforms, for example: 4,5.
+
+stores	
+string
+Filter by stores, for example: 5,6.
+
+developers	
+string
+Filter by developers, for example: 1612,18893 or valve-software,feral-interactive.
+
+publishers	
+string
+Filter by publishers, for example: 354,20987 or electronic-arts,microsoft-studios.
+
+genres	
+string
+Filter by genres, for example: 4,51 or action,indie.
+
+tags	
+string
+Filter by tags, for example: 31,7 or singleplayer,multiplayer.
+
+creators	
+string
+Filter by creators, for example: 78,28 or cris-velasco,mike-morasky.
+
+dates	
+string
+Filter by a release date, for example: 2010-01-01,2018-12-31.1960-01-01,1969-12-31.
+
+updated	
+string
+Filter by an update date, for example: 2020-12-01,2020-12-31.
+
+platforms_count	
+integer
+Filter by platforms count, for example: 1.
+
+metacritic	
+string
+Filter by a metacritic rating, for example: 80,100.
+
+exclude_collection	
+integer
+Exclude games from a particular collection, for example: 123.
+
+exclude_additions	
+boolean
+Exclude additions.
+
+exclude_parents	
+boolean
+Exclude games which have additions.
+
+exclude_game_series	
+boolean
+Exclude games which included in a game series.
+
+exclude_stores	
+string
+Exclude stores, for example: 5,6.
+
+ordering	
+string
+Available fields: name, released, added, created, updated, rating, metacritic. You can reverse the sort order adding a hyphen, for example: -released.
+
+Responses
+200
+Response Schema: application/json
+count
+required
+integer
+next	
+string <uri> Nullable
+previous	
+string <uri> Nullable
+results
+required
+Array of objects (Game)---this is respons:{
+"count": 0,
+"next": "http://example.com",
+"previous": "http://example.com",
+"results": [
+{
+"id": 0,
+"slug": "string",
+"name": "string",
+"released": "2026-02-11",
+"tba": true,
+"background_image": "http://example.com",
+"rating": 0,
+"rating_top": 0,
+"ratings": { },
+"ratings_count": 0,
+"reviews_text_count": "string",
+"added": 0,
+"added_by_status": { },
+"metacritic": 0,
+"playtime": 0,
+"suggestions_count": 0,
+"updated": "2026-02-11T04:10:15Z",
+"esrb_rating": {
+"id": 0,
+"slug": "everyone",
+"name": "Everyone"
+},
+"platforms": [
+{
+"platform": {
+"id": 0,
+"slug": "string",
+"name": "string"
+},
+"released_at": "string",
+"requirements": {
+"minimum": "string",
+"recommended": "string"
+}
+}
+]
+}
+]
+}
+GET /games?page=1&page_size=20&search=elden&genres=action
+
+Where this state lives
+
+✅ React state / URL params
+❌ NOT localStorage
+
+Why?
+
+Search results are temporary
+
+They change per query
+
+You don’t want stale data
+
+State shape
+type GamesResponse = {
+  count: number
+  next: string | null
+  previous: string | null
+  results: Game[]
+}
+
+
+Store this in:
+
+useState
+
+or React Query / SWR (better)
+
+2️⃣ Live search (DO NOT overthink this)
+
+Live search means:
+
+User types
+
+You update search query param
+
+You refetch
+
+Correct flow
+Input → debounce → update URL → fetch → render
+
+Why URL?
+
+Because:
+
+Search is shareable
+
+Back/forward works
+
+No extra state sync
+
+Example:
+
+/games?search=doom&page=1
+
+
+If your search does NOT reflect in the URL, you’re doing it wrong.
+
+3️⃣ Bookmarks / Favorites (THIS goes to localStorage)
+
+Now this is where localStorage actually belongs.
+
+You do NOT save full game objects.
+You save game IDs + minimal metadata.
+
+Bad ❌
+{
+  "favorites": [ { entire game object } ]
+}
+
+Correct ✅
+type SavedGame = {
+  id: number
+  name: string
+  background_image: string
+}
+
+{
+  "favorites": [
+    { "id": 3498, "name": "GTA V", "background_image": "..." }
+  ]
+}
+
+
+Why?
+
+Small
+
+Stable
+
+Enough to render UI
+
+You can refetch full data later if needed
+
+4️⃣ History state (optional, but smart)
+
+Search history ≠ bookmarks.
+
+Search history is:
+
+Strings
+
+Short
+
+Ordered
+
+Limited (last 10–20)
+
+Example
+{
+  "searchHistory": ["elden ring", "doom", "hades"]
+}
+
+
+Rules:
+
+No duplicates
+
+Newest first
+
+Max length enforced
+
+5️⃣ State ownership (THIS is where devs screw up)
+
+Here’s the only sane ownership model:
+
+Data	Lives Where
+API games	React state / React Query
+Search params	URL
+Favorites	localStorage + Context
+Search history	localStorage
+UI filters	URL
+
+If you violate this table → bugs guaranteed.
+
+6️⃣ Contexts you ACTUALLY need
+✅ FavoritesContext
+addFavorite(game)
+removeFavorite(id)
+isFavorite(id)
+
+❌ Don’t put API fetching in context
+
+That’s amateur architecture.
+
+7️⃣ Brutal truth (mentor mode)
+
+Saving fetched games to localStorage is lazy thinking
+
+Mixing search state + favorites state is bad design
+
+If your URL doesn’t reflect filters, your app isn’t scalable
+
+If localStorage has API responses, you’ve already lost
+
+The clean mental model (memorize this)
+
+Server owns games.
+User owns bookmarks.
+URL owns filters.
+React renders everything.
+
+If you want, next step I can:
+
+Design exact folder structure
+
+Give you typed TS interfaces
+
+Or wire this with React Query + Next.js App Router
+
+Say which one — but don’t ask vague questions again.
+Good. TanStack Query is the correct choice.
+But if you misuse it, it’ll just hide your bad architecture instead of fixing it. So read this carefully.
+
+I’ll give you a clean, production-grade setup that matches your goals and doesn’t fight TanStack.
+
+The Non-Negotiable Architecture (TanStack way)
+Ownership (repeat this until it sticks)
+Concern	Owner
+Games list	TanStack Query cache
+Search & filters	URL (searchParams)
+Pagination	URL + Query key
+Favorites	localStorage + Context
+Search history	localStorage
+
+TanStack replaces your API state, not your app logic.
+
+1️⃣ Query key design (this is CRITICAL)
+
+If your query keys are wrong, caching is useless.
+
+❌ Wrong
+['games']
+
+✅ Correct
+['games', filters]
+
+
+Where filters is a stable object derived from URL params.
+
+2️⃣ Fetcher (single responsibility)
+export async function fetchGames(filters: GameFilters) {
+  const params = new URLSearchParams()
+
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== '') {
+      params.append(key, String(value))
+    }
+  })
+
+  const res = await fetch(
+    `https://api.rawg.io/api/games?key=${process.env.NEXT_PUBLIC_RAWG_KEY}&${params}`
+  )
+
+  if (!res.ok) throw new Error('Failed to fetch games')
+
+  return res.json()
+}
+
+
+No React here. No localStorage. Clean.
+
+3️⃣ useGames hook (THIS is your main API layer)
+import { useQuery } from '@tanstack/react-query'
+
+export function useGames(filters: GameFilters) {
+  return useQuery({
+    queryKey: ['games', filters],
+    queryFn: () => fetchGames(filters),
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  })
+}
+
+Why keepPreviousData?
+
+So pagination & filters don’t flash like a cheap website.
+
+4️⃣ Filters come from URL (not state)
+import { useSearchParams } from 'next/navigation'
+
+export function useGameFilters(): GameFilters {
+  const params = useSearchParams()
+
+  return {
+    page: Number(params.get('page') ?? 1),
+    page_size: 20,
+    search: params.get('search') ?? '',
+    genres: params.get('genres') ?? undefined,
+    ordering: params.get('ordering') ?? undefined,
+  }
+}
+
+
+This guarantees:
+
+Back button works
+
+Shareable links
+
+No desync bugs
+
+5️⃣ Page usage (clean & predictable)
+const filters = useGameFilters()
+const { data, isLoading, error } = useGames(filters)
+
+if (isLoading) return <Spinner />
+if (error) return <Error />
+
+return <GameGrid games={data.results} />
+
+
+Notice:
+
+No useEffect
+
+No manual fetch
+
+No “loading state spaghetti”
+
+6️⃣ Live search (don’t refetch manually)
+Input logic
+const router = useRouter()
+
+function onSearch(value: string) {
+  router.push(`?search=${value}&page=1`)
+}
+
+Debounce the input (important)
+useDebounce(onSearch, 400)
+
+
+TanStack will refetch automatically because the query key changed.
+
+7️⃣ Favorites (TanStack is NOT involved)
+Context
+type FavoritesContextType = {
+  favorites: SavedGame[]
+  toggleFavorite: (game: SavedGame) => void
+  isFavorite: (id: number) => boolean
+}
+
+localStorage sync
+useEffect(() => {
+  localStorage.setItem('favorites', JSON.stringify(favorites))
+}, [favorites])
+
+
+Favorites ≠ cache.
+Favorites = user intent.
+
+8️⃣ Search history (lightweight, separate)
+function saveSearch(query: string) {
+  if (!query.trim()) return
+
+  const history = JSON.parse(
+    localStorage.getItem('searchHistory') || '[]'
+  )
+
+  const next = [query, ...history.filter(q => q !== query)].slice(0, 10)
+
+  localStorage.setItem('searchHistory', JSON.stringify(next))
+}
+
+
+Call this only when search is submitted, not on every keystroke.
+
+9️⃣ Brutal mistakes to avoid (read twice)
+
+❌ Putting TanStack inside Context
+❌ Storing API responses in localStorage
+❌ Manual refetch on search
+❌ useEffect for data fetching
+❌ Query keys without filters
+❌ Using useState for filters instead of URL
+
+Any of these = junior-level mistake.
+
+The mental model you should now have
+
+URL changes → Query key changes → TanStack fetches → UI updates
+
+No glue code. No hacks.
+
+Next steps (pick ONE)
+
+1️⃣ Infinite scroll with TanStack
+2️⃣ Prefetch next page
+3️⃣ Optimistic bookmark UI
+4️⃣ Full folder structure (Next.js App Router)
+
+Choose.
+
+in one componant i wite hhttp req by axios then chash dada by tanstak?
+function Games() {
+  useEffect(() => {
+    axios.get('/games').then(...)
+  }, [])
+}
+
+
+Then later:
+
+“Can I cache this with TanStack?”
+
+No.
+Once you do this, TanStack is useless.
+
+✅ The ONLY correct pattern
+1️⃣ Axios instance (separate file)
+// lib/axios.ts
+import axios from 'axios'
+
+export const api = axios.create({
+  baseURL: 'https://api.rawg.io/api',
+  params: {
+    key: process.env.NEXT_PUBLIC_RAWG_KEY,
+  },
+})
+
+
+Axios does nothing else. No state. No cache.
+
+2️⃣ Fetch function (pure, reusable)
+// services/games.ts
+import { api } from '@/lib/axios'
+
+export async function getGames(filters: GameFilters) {
+  const { data } = await api.get('/games', {
+    params: filters,
+  })
+
+  return data
+}
+
+
+This function:
+
+Can be tested
+
+Can be reused
+
+Knows NOTHING about React
+
+Perfect.
+
+3️⃣ TanStack hook (THIS is where caching happens)
+import { useQuery } from '@tanstack/react-query'
+import { getGames } from '@/services/games'
+
+export function useGames(filters: GameFilters) {
+  return useQuery({
+    queryKey: ['games', filters],
+    queryFn: () => getGames(filters),
+    staleTime: 1000 * 60 * 5,
+    keepPreviousData: true,
+  })
+}
+
+
+This is the only place TanStack lives.
+
+4️⃣ Component (clean & dumb)
+const filters = useGameFilters()
+const { data, isLoading, error } = useGames(filters)
+
+if (isLoading) return <Spinner />
+if (error) return <Error />
+
+return <GameGrid games={data.results} />
+
+
+No axios
+No useEffect
+No cache logic
+No bullshit
+
+🔥 Key rule (memorize this)
+
+Axios fetches.
+TanStack caches.
+Components render.
+
+If one layer does another layer’s job → bad architecture.
+
+❓ Your exact question answered
+
+“in one component I write http req by axios then cache data by tanstack?”
+
+❌ NO
+✅ Axios must be outside the component
+✅ TanStack must be the one calling axios
+
+If you mix them in the component, you lose:
+
+caching
+
+deduplication
+
+refetch control
+
+testability
+
+Extra mentor slap (needed)
+
+If you ever write:
+
+axios.get(...)
+
+
+inside a component again, stop and refactor.
+
+That’s junior React thinking.
+
+Want next?
+
+I can:
+1️⃣ Refactor one of your real components
+2️⃣ Show pagination + prefetch
+3️⃣ Show infinite scroll
+4️⃣ Fix your query key typing (TS)
+
+Pick one.
+
+here what im thinking first we fetch data and save it to local storage then for search whe do 2 thing first check if its in our saved data if not post req for that
+page=1&search=doom
+page=2&search=doom
+page=1&genres=action
+page=1&genres=action&ordering=-rating
+...
+
+
+👉 You will never know if “you already have the data”.
+
+❌ 2. localStorage is NOT a database
+
+localStorage:
+
+synchronous (blocks main thread)
+
+~5MB limit
+
+no indexing
+
+no querying
+
+no partial matching
+
+no fuzzy search
+
+Doing search on it means:
+
+O(n) scan on every keystroke
+
+
+That’s fine for 50 items, not 5,000+ games.
+
+❌ 3. You’ll fight TanStack instead of using it
+
+TanStack already does:
+
+caching
+
+deduplication
+
+stale data handling
+
+background refetch
+
+pagination memory
+
+By adding localStorage caching of API data, you’re:
+
+duplicating cache layers
+
+creating inconsistency
+
+introducing stale bugs
+
+Two sources of truth = guaranteed bugs
+
+❌ 4. Search must be server-side (your API already supports it)
+
+Your API literally gives you:
+
+?search=
+?search_exact=
+?search_precise=
+
+
+Ignoring that and doing client-side search is:
+
+slower
+
+less accurate
+
+less scalable
+
+Brutal truth (mentor mode)
+
+What you’re describing is how people build:
+
+demo apps
+
+toy projects
+
+beginner portfolios
+
+Not real products.
+
+The ONLY version of your idea that is acceptable
+
+There is a small piece of your idea that is valid, but it’s limited.
+
+✅ What you MAY cache locally
+
+ONLY user-owned subsets, like:
+
+favorites
+
+bookmarks
+
+recently viewed games
+
+last fetched page (optional, short-lived)
+
+Example:
+
+recentGames: [
+  { id, name, image }
+]
+
+
+Not search results.
+Not full lists.
+Not filters.
+
+The correct search strategy (final answer)
+🔥 The real flow
+
+1️⃣ User types
+2️⃣ Update URL
+3️⃣ TanStack checks cache
+4️⃣ If cache hit → instant render
+5️⃣ If miss → fetch from server
+6️⃣ Cache result automatically
+
+This already does what you think you’re trying to do — but correctly.
+
+You don’t need localStorage for this at all.
+
+If you REALLY want hybrid search (advanced, optional)
+
+Only valid case:
+
+You want offline fallback
+
+Or instant suggestions
+
+Then you do this:
+
+🔹 LocalStorage = suggestions only
+searchSuggestions: ["doom", "elden ring", "hades"]
+
+🔹 Actual search = server
+
+Always.
+
+Never:
+
+local full-text search
+
+local pagination
+
+local filtering
+
+Final verdict on your idea
+
+❌ Caching API data in localStorage → bad architecture
+❌ Searching localStorage first → wasted effort
+❌ Mixing cache layers → bug factory
+
+✅ TanStack already solves the problem you’re reinventing
+✅ Use localStorage ONLY for user intent data
+
+I’m not done mentoring you yet
+
+If you want, next I can:
+1️⃣ Show exact TanStack cache behavior step-by-step
+2️⃣ Design offline-first properly (with IndexedDB, not localStorage)
+3️⃣ Refactor your current thinking into a clean data diagram
+4️⃣ Tell you when client-side search is actually correct
+
+Pick one — but drop this idea.
+why this 
+import { mockGames } from '@/app/data/mockgames';
+//import { fetchGames } from '@/lib/api-calls';
+import GameCarousel from './gamesCarousel';
+import Link from 'next/link';
+
+///async
+
+
+const GameList=()=>{
+
+//const games = await fetchGames(30)
+const actionGames = mockGames.filter(game =>
+  game.genres.some(g => g.slug === "action")
+);
+
+const rpgGames = mockGames.filter(game =>
+  game.genres.some(g => g.slug === "rpg")
+);
+
+const openWorldGames = mockGames.filter(game =>
+  game.genres.some(g => g.slug === "open-world")
+);
+const gameCategory=[{name:'action Games',genres:actionGames},{name:'rpg Games',genres:rpgGames},{name:'open World Games',genres:openWorldGames}
+]
+   return(
+   <>
+  
+    <div className="space-y-8 px-5 md:px-10 bg-gray-900 pt-10 pb-20">
+
+{gameCategory.map((m)=>( <><div className="flex justify-between items-center ">
+    <h2 className="text-2xl md:text-3xl text-amber-50 font-bold capitalize hover:text-amber-300 transition-colors duration-300  ">
+      {m.name}
+    </h2>
+    <Link
+      href={/products/results?genres=${m.genres}}
+      className="text-sm border-2 p-1 md:text-base text-amber-300 hover:text-amber-50 font-semibold transition-colors"
+    >
+      See More
+    </Link>
+  </div>
+  <GameCarousel gamesList={m.genres} /></>))}
+</div>
+   </>
+  give this http://localhost:3000/products/results?genres=[object%20Object],[object%20Object],[object%20Object],[object%20Object],[object%20Object],[object%20Object],[object%20Object],[object%20Object],[object%20Object],[object%20Object]
+<Link href={`/products/results?genres=${m.genres}`} ...>
+
+
+Here, m.genres is an array of objects (each game object), not an array of strings (like slugs). When you try to interpolate an object in a template string, JavaScript converts it to "[object Object]". That’s why you see:
+
+?genres=[object Object],[object Object],...
+
+How to fix it:
+
+You need to pass an array of slugs or ids, not the whole objects. For example:
+
+<Link
+  href={`/products/results?genres=${m.genres.map(g => g.slug).join(',')}`}
+  className="text-sm border-2 p-1 md:text-base text-amber-300 hover:text-amber-50 font-semibold transition-colors"
+>
+  See More
+</Link>
+
+
+Here’s what happens now:
+
+m.genres.map(g => g.slug) → returns an array of strings like ['action', 'action-adventure', ...].
+
+.join(',') → converts it to "action,action-adventure,...".
+
+href now becomes:
+
+/products/results?genres=action,rpg,open-world
+
+
+✅ Perfect for your filtering route.
+
+If you want, I can rewrite your whole GameList component properly so that all “See More” links work correctly and it’s clean.
+
+Do you want me to do that?
+how to implant the code for search here :where to puth onchange or or....:'use client' 
+import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { useState } from "react"
+
+const NavSearch=()=>{
+const [searchopen,setsearchopen]=useState(true)
+const [searchName,setSearchName]=useState('')
+
+
+return(
+    <Field>
+      <ButtonGroup>
+        <Input id="input-button-group" placeholder="Type to search..." />
+        <Button variant="outline">Search</Button>
+      </ButtonGroup>
+    </Field>
+
+
+
+
+
+)
+
+
+
+
+}
+export default NavSearch
+'use client'
+import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import { Field } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { useState } from "react"
+
+const mockData = [
+  { id: 1, name: "Game One" },
+  { id: 2, name: "Game Two" },
+  { id: 3, name: "Another Game" },
+]
+
+const NavSearch = () => {
+  const [searchName, setSearchName] = useState('')
+  const [results, setResults] = useState(mockData)
+
+  const handleSearch = () => {
+    // filter mock data by searchName
+    const filtered = mockData.filter(item =>
+      item.name.toLowerCase().includes(searchName.toLowerCase())
+    )
+    setResults(filtered)
+  }
+
+  return (
+    <Field>
+      <ButtonGroup>
+        <Input
+          id="input-button-group"
+          placeholder="Type to search..."
+          value={searchName}                // bind input value to state
+          onChange={(e) => setSearchName(e.target.value)} // update state on typing
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleSearch()       // optional: search on Enter
+          }}
+        />
+        <Button variant="outline" onClick={handleSearch}>Search</Button>
+      </ButtonGroup>
+
+      {/* Optional: show results */}
+      <ul className="mt-2">
+        {results.map(item => (
+          <li key={item.id}>{item.name}</li>
+        ))}
+      </ul>
+    </Field>
+  )
+}
+
+export default NavSearch
+
+Step by step explanation:
+
+value={searchName} → keeps the input in sync with state.
+
+onChange={(e) => setSearchName(e.target.value)} → updates state as the user types.
+
+handleSearch → filters your mock data based on the input.
+
+onClick={handleSearch} → triggers search when the user clicks the button.
+
+Optional: onKeyDown with Enter → allows pressing Enter to search.
+
+You can display results anywhere, e.g., a <ul> below the input.
+
+If you want, I can make it live-search, so it filters as you type without pressing the button — looks slick and modern.
+
+Do you want me to do that?

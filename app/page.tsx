@@ -1,21 +1,37 @@
-'use client';
+"use client";
 
-import { useGames } from '@/providers/context';
-import HeroSection from './components/heroSection/herosection';
-import GameList from './components/gameSection/gamelist';
+import { useState, useEffect } from "react";
+import { useGames } from "@/providers/context";
+import HeroSection from "./components/heroSection/herosection";
+import GameList from "./components/gameSection/gamelist";
+import Loading from "./components/Loading";
 
 export default function Home() {
   const { games, isLoading, error } = useGames();
+  const [isDataReady, setIsDataReady] = useState(false);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  // Simulating data fetch state
+  useEffect(() => {
+    if (!isLoading && games.length > 0) {
+      setIsDataReady(true);
+    }
+  }, [games, isLoading]);
+
+  // Show loading state if still fetching
+  if (!isDataReady) {
+    return <Loading />;
+  }
+
+  // Handle errors
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
- ///landing - home page
-      <main className="flex flex-col">
-        <HeroSection gamesList={games} />
-        <GameList gamesList={games} />
-      </main>
- 
+    <main className="flex flex-col">
+      {/* Landing/Home page */}
+      <HeroSection gamesList={games} />
+      <GameList gamesList={games} />
+    </main>
   );
 }

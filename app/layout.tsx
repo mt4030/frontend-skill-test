@@ -36,13 +36,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} newestOnTop closeOnClick pauseOnHover theme="dark" />
-        <GameProvider>
+        
           <QueryProvider>
+            <GameProvider>
             <NavBar />
             {children}
+           <Footer />
+            </GameProvider>
           </QueryProvider>
-        </GameProvider>
-        <Footer />
+       
+     
       </body>
     </html>
   );

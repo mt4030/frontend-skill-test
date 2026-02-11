@@ -26,7 +26,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ gamesList }) => {
   return (
     <>
       <HeroCarousel gamesList={gamesList} />
-      <h2 className="text-white text-2xl mt-8 mb-4">Advanced Search</h2>
+      <h2 className="text-white text-3xl font-bold mt-10 text-center">Advanced Search</h2>
       <AdvancedGameFilter
         initialGenres={[]}
         initialPlatforms={[]}

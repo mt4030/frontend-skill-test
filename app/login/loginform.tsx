@@ -78,7 +78,9 @@ const LoginForm = () => {
             {loginMutation.isPending ? "Logging in..." : "Sign In"}
           </button>
         </form>
-        <p>use this emilys-emilyspass</p>
+        <p className="text-center">username: <span className=" text-green-700">emilys </span> password: <span className=" text-green-700"> emilyspass </span>  <br />
+        or find more user and password from <span className="text-red-800">https://dummyjson.com/docs</span> 
+        </p>
 
         {error && <p className="text-red-500 mt-2 text-center">{error}</p>}
       </div>

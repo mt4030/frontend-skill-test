@@ -29,8 +29,8 @@ const GameList = ({ gamesList }) => {
   // 1️⃣ Get all unique genres
   const genreMap: Record<string, { id: number; name: string; games: Game[] }> = {};
 
-  gamesList.forEach((game) => {
-    game.genres.forEach((genre) => {
+  gamesList.forEach((game:any) => {
+    game.genres.forEach((genre:any) => {
       if (!genreMap[genre.slug]) {
         genreMap[genre.slug] = { id: genre.id, name: genre.name, games: [] };
       }
@@ -47,7 +47,7 @@ const GameList = ({ gamesList }) => {
   }));
 
   return (
-    <div className="space-y-8 px-5 md:px-10 bg-gray-900 pt-10 pb-20">
+    <div className="space-y-8 px-5 md:px-10 bg-gray-950 pt-15 pb-20">
       {gameCategories.map((category) => (
         <div key={category.id}>
           <div className="flex justify-between items-center mb-4">
@@ -55,7 +55,8 @@ const GameList = ({ gamesList }) => {
               {category.name}
             </h2>
             <Link
-              href={`/products/results?genres=${category.slug}`}
+          
+             href={`/products/category/${category.slug}`}
               className="text-sm border-2 p-1 md:text-base text-amber-300 hover:text-amber-50 font-semibold transition-colors"
             >
               See More
