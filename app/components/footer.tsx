@@ -3,7 +3,7 @@ import { FaInstagram, FaLinkedinIn } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-white h-30 text-gray-900 py-6">
+    <footer className="bg-gray-950 h-30 text-white py-6">
       <div className="max-w-7xl mx-auto px-4 text-center md:flex-row justify-between items-center gap-4">
       
             <div className="flex justify-center mb-5 gap-4">
@@ -12,7 +12,7 @@ const Footer = () => {
             href="https://instagram.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="p-2 rounded-full hover:bg-gray-800 bg-amber-500 transition"
+            className="p-2 rounded-full hover:bg-transparent bg-amber-500 transition"
           >
             <FaInstagram />
           </a>
@@ -20,7 +20,7 @@ const Footer = () => {
             href="https://linkedin.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="p-2 rounded-full hover:bg-gray-800 bg-amber-500 transition"
+            className="p-2 rounded-full hover:bg-transparent bg-amber-500 transition"
           >
             <FaLinkedinIn />
           </a>

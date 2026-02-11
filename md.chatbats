@@ -1,0 +1,1193 @@
+i got a project that includes : .1 پیاده سازی یک داشبرد براساس وب سرویس docs/com.dummyjson://https و یکی از قالب های
+showcase/com.ui-chakra://https شامل ورود، کاربران و محصوالت
+.2 ساخت صفحه محصوالت و فیلترها و صفحه نمایش تک بازی براساس وب سرویس
+خودتان دلخواه وقالب https://api.rawg.io/docs/#tag/games
+.3 یک کامپوننت Select Dropdown پیشرفته بسازید:
+Headless UI (Listbox) از استفاده•
+• استایل با Tailwind
+• جستجو در آیتم ها
+• انتخاب چندتایی
+• گروه بندی آیتمها
+• انتخاب همه/هیچ
+• نمایش تعداد انتخاب ها
+• مجازی سازی برای آیتمهای زیاد --- my set up are Next.js, Tailwind, TanStack Query, shadcn, Headless UI -so in my mind is one project i like the gmae api  let structure the project in step one
+what براساس وب means here صفحه نمایش تک بازی براساس وب and i want a full project not just dashboard dashboeard is one part of it - we need home routes then dashboard and sign in and sign up and individual products do we need more routes and error route Products page the functional page for advance filtering
+let start i plan how should the site will look like on paper lets go to navbar - i get a 1button to signup and sign in  links and search bar suggestion and icon i want you to make a game icon for me
+make an array of links next js way  and name to these routes signin and signup products when log in profile with route dashboard
+just give me what i ask the array  not the whole component code and in private just one is fine name profile path dashboard
+lets tackle the connecting to api tell me what are the info that this api gives me and in what format :games
+Get a list of games.
+query Parameters
+page	
+integer
+
+A page number within the paginated result set.
+page_size	
+integer
+
+Number of results to return per page.
+search	
+string
+
+Search query.
+search_precise	
+boolean
+
+Disable fuzziness for the search query.
+search_exact	
+boolean
+
+Mark the search query as exact.
+parent_platforms	
+string
+
+Filter by parent platforms, for example: 1,2,3.
+platforms	
+string
+
+Filter by platforms, for example: 4,5.
+stores	
+string
+
+Filter by stores, for example: 5,6.
+developers	
+string
+
+Filter by developers, for example: 1612,18893 or valve-software,feral-interactive.
+publishers	
+string
+
+Filter by publishers, for example: 354,20987 or electronic-arts,microsoft-studios.
+genres	
+string
+
+Filter by genres, for example: 4,51 or action,indie.
+tags	
+string
+
+Filter by tags, for example: 31,7 or singleplayer,multiplayer.
+creators	
+string
+
+Filter by creators, for example: 78,28 or cris-velasco,mike-morasky.
+dates	
+string
+
+Filter by a release date, for example: 2010-01-01,2018-12-31.1960-01-01,1969-12-31.
+updated	
+string
+
+Filter by an update date, for example: 2020-12-01,2020-12-31.
+platforms_count	
+integer
+
+Filter by platforms count, for example: 1.
+metacritic	
+string
+
+Filter by a metacritic rating, for example: 80,100.
+exclude_collection	
+integer
+
+Exclude games from a particular collection, for example: 123.
+exclude_additions	
+boolean
+
+Exclude additions.
+exclude_parents	
+boolean
+
+Exclude games which have additions.
+exclude_game_series	
+boolean
+
+Exclude games which included in a game series.
+exclude_stores	
+string
+
+Exclude stores, for example: 5,6.
+ordering	
+string
+
+Available fields: name, released, added, created, updated, rating, metacritic. You can reverse the sort order adding a hyphen, for example: -released.
+Responses
+200
+Response Schema: application/json
+count
+required
+	
+integer
+next	
+string <uri> Nullable
+previous	
+string <uri> Nullable
+results
+required
+	
+Array of objects (Game)  /games
+https://api.rawg.io/api/games
+Response samples
+
+    200
+
+Content type
+application/json
+Copy
+Expand all Collapse all
+{
+
+    "count": 0,
+    "next": "http://example.com",
+    "previous": "http://example.com",
+    "results": 
+
+[
+
+{
+
+    "id": 0,
+    "slug": "string",
+    "name": "string",
+    "released": "2026-02-09",
+    "tba": true,
+    "background_image": "http://example.com",
+    "rating": 0,
+    "rating_top": 0,
+    "ratings": { },
+    "ratings_count": 0,
+    "reviews_text_count": "string",
+    "added": 0,
+    "added_by_status": { },
+    "metacritic": 0,
+    "playtime": 0,
+    "suggestions_count": 0,
+    "updated": "2026-02-09T09:38:42Z",
+    "esrb_rating": 
+
+{
+
+    "id": 0,
+    "slug": "everyone",
+    "name": "Everyone"
+
+},
+"platforms": 
+[
+
+{
+
+    "platform": 
+
+{
+
+    "id": 0,
+    "slug": "string",
+    "name": "string"
+
+},
+"released_at": "string",
+"requirements": 
+
+                    {
+                        "minimum": "string",
+                        "recommended": "string"
+                    }
+                }
+            ]
+        }
+    ]
+
+} -and also do i get price - image and other stuff crucial to our filtring - dont give me code 
+why this error happning could it becuz of that rawg website wont loading without vpn in iran ???? GET / 200 in 319ms (compile: 207ms, render: 112ms)
+RAWG fetch error: TypeError: fetch failed
+    at async fetchGames (lib\api-calls.ts:6:17)
+    at async HeroSection (app\components\heroSection\herosection.tsx:7:15)
+  4 |
+  5 |   try {
+> 6 |     const res = await fetch(
+    |                 ^
+  7 |       https://api.rawg.io/api/games?key=${API_KEY}&page_size=${limit},
+  8 |  );
+  9 | {
+  [cause]: Error [ConnectTimeoutError]: Connect Timeout Error (attempted address: api.rawg.io:443, timeout: 10000ms)
+      at ignore-listed frames {
+    code: 'UND_ERR_CONNECT_TIMEOUT'
+  }
+}
+
+
+import { fetchGames } from '@/lib/api-calls';
+import GameCarousel from './gamesCarousel';
+const GameList=async()=>{
+
+const games = await fetchGames(30)
+const actionGames = games.filter(game =>
+  game.genres.some(g => g.slug === "action")
+);
+
+const rpgGames = games.filter(game =>
+  game.genres.some(g => g.slug === "rpg")
+);
+
+const openWorldGames = games.filter(game =>
+  game.genres.some(g => g.slug === "open-world")
+);
+
+   return(
+<div>
+<h2>action games</h2>
+ <GameCarousel gamesList={actionGames}/>
+ <h2>rgp games</h2>
+ <GameCarousel gamesList={rpgGames}/>
+ <h2>openworld games</h2>
+ <GameCarousel gamesList={openWorldGames}/>
+
+</div>
+
+
+
+   ) 
+}
+export default GameList- what 'GameCarousel' cannot be used as a JSX component.
+  Its type '({ gamesList }: { gamesList: any; }) => void' is not a valid JSX element type.
+    Type '({ gamesList }: { gamesList: any; }) => void' is not assignable to type '(props: any) => ReactNode | Promise<ReactNode>'.
+      Type 'void' is not assignable to type 'ReactNode | Promise<ReactNode>'. means
+should i make a gamecard if i want to make a card with especipic things i want : 
+import * as React from "react"
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/app/components/ui/carousel"
+
+interface gameCarouselProps {
+  gamesList: any[]
+}
+
+export function GameCarousel: React.FC<gameCarouselProps>({gamesList}) {
+  return (
+    <Carousel
+      opts={{
+        align: "start",
+      }}
+      className="w-full max-w-[12rem] sm:max-w-xs md:max-w-sm"
+    >
+      <CarouselContent>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <CarouselItem key={index} className="basis-1/2 md:basis-4 lg:basis-1/5">
+            <div className="p-1">
+              <Card>
+                <CardContent className="flex aspect-square items-center justify-center p-6">
+                  <span className="text-3xl font-semibold">{index + 1}</span>
+                </CardContent>
+              </Card>
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+    </Carousel>
+  )
+}
+ 
+im not connected to api how to test my design locally with local images and titles
+add 10 more to this and image name defalt that is in public img
+add game thumnail too 
+change img to png
+is this works:
+import { mockGames } from '@/app/data/mockgames';
+//import { fetchGames } from '@/lib/api-calls';
+import GameCarousel from './gamesCarousel';
+const GameList=async()=>{
+
+//const games = await fetchGames(30)
+const actionGames = mockGames.filter(game =>
+  game.genres.some(g => g.slug === "action")
+);
+
+const rpgGames = mockGames.filter(game =>
+  game.genres.some(g => g.slug === "rpg")
+);
+
+const openWorldGames = mockGames.filter(game =>
+  game.genres.some(g => g.slug === "open-world")
+);
+
+   return(
+<div>
+<h2>action games</h2>
+ <GameCarousel gamesList={actionGames}/>
+ <h2>rgp games</h2>
+ <GameCarousel gamesList={rpgGames}/>
+ <h2>openworld games</h2>
+ <GameCarousel gamesList={openWorldGames}/>
+
+</div>
+
+
+
+   ) 
+}
+export default GameList
+how in devtool find out the style belongs to what file exactly
+i doesnt says anything data-slot="card" class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm hover:scale-105 transition-transform duration-500" 
+i solve the problem but tell me how to change the style and also positions of carosel:"use client"
+
+import * as React from "react"
+import useEmblaCarousel, {
+  type UseEmblaCarouselType,
+} from "embla-carousel-react"
+import { ArrowLeft, ArrowRight } from "lucide-react"
+
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+
+type CarouselApi = UseEmblaCarouselType[1]
+type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
+type CarouselOptions = UseCarouselParameters[0]
+type CarouselPlugin = UseCarouselParameters[1]
+
+type CarouselProps = {
+  opts?: CarouselOptions
+  plugins?: CarouselPlugin
+    orientation?: "horizontal" | "vertical"
+  setApi?: (api: CarouselApi) => void
+}
+
+type CarouselContextProps = {
+  carouselRef: ReturnType<typeof useEmblaCarousel>[0]
+  api: ReturnType<typeof useEmblaCarousel>[1]
+  scrollPrev: () => void
+  scrollNext: () => void
+  canScrollPrev: boolean
+  canScrollNext: boolean
+} & CarouselProps
+
+const CarouselContext = React.createContext<CarouselContextProps | null>(null)
+
+function useCarousel() {
+  const context = React.useContext(CarouselContext)
+
+  if (!context) {
+    throw new Error("useCarousel must be used within a <Carousel />")
+  }
+
+  return context
+}
+
+function Carousel({
+  orientation = "horizontal",
+  opts,
+  setApi,
+  plugins,
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div"> & CarouselProps) {
+  const [carouselRef, api] = useEmblaCarousel(
+    {
+      ...opts,
+      axis: orientation === "horizontal" ? "x" : "y",
+    },
+    plugins
+  )
+  const [canScrollPrev, setCanScrollPrev] = React.useState(false)
+  const [canScrollNext, setCanScrollNext] = React.useState(false)
+
+  const onSelect = React.useCallback((api: CarouselApi) => {
+    if (!api) return
+    setCanScrollPrev(api.canScrollPrev())
+    setCanScrollNext(api.canScrollNext())
+  }, [])
+
+  const scrollPrev = React.useCallback(() => {
+    api?.scrollPrev()
+  }, [api])
+
+  const scrollNext = React.useCallback(() => {
+    api?.scrollNext()
+  }, [api])
+
+  const handleKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault()
+        scrollPrev()
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault()
+        scrollNext()
+      }
+    },
+    [scrollPrev, scrollNext]
+  )
+
+  React.useEffect(() => {
+    if (!api || !setApi) return
+    setApi(api)
+  }, [api, setApi])
+
+  React.useEffect(() => {
+    if (!api) return
+    onSelect(api)
+    api.on("reInit", onSelect)
+    api.on("select", onSelect)
+
+    return () => {
+      api?.off("select", onSelect)
+    }
+  }, [api, onSelect])
+
+  return (
+    <CarouselContext.Provider
+      value={{
+        carouselRef,
+        api: api,
+        opts,
+        orientation:
+          orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
+        scrollPrev,
+        scrollNext,
+        canScrollPrev,
+        canScrollNext,
+      }}
+    >
+      <div
+        onKeyDownCapture={handleKeyDown}
+        className={cn("relative", className)}
+        role="region"
+        aria-roledescription="carousel"
+        data-slot="carousel"
+        {...props}
+      >
+        {children}
+      </div>
+    </CarouselContext.Provider>
+  )
+}
+
+function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
+  const { carouselRef, orientation } = useCarousel()
+
+  return (
+    <div
+      ref={carouselRef}
+      className="overflow-hidden"
+      data-slot="carousel-content"
+    >
+      <div
+        className={cn(
+          "flex",
+          orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
+          className
+        )}
+        {...props}
+      />
+    </div>
+  )
+}
+
+function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
+  const { orientation } = useCarousel()
+
+  return (
+    <div
+      role="group"
+      aria-roledescription="slide"
+      data-slot="carousel-item"
+      className={cn(
+        "min-w-0 shrink-0 grow-0 basis-full",
+        orientation === "horizontal" ? "pl-4" : "pt-4",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function CarouselPrevious({
+  className,
+  variant = "outline",
+  size = "icon",
+  ...props
+}: React.ComponentProps<typeof Button>) {
+  const { orientation, scrollPrev, canScrollPrev } = useCarousel()
+
+  return (
+    <Button
+      data-slot="carousel-previous"
+      variant={variant}
+      size={size}
+      className={cn(
+        "absolute size-8 rounded-full",
+        orientation === "horizontal"
+          ? "top-1/2 -left-12 -translate-y-1/2"
+          : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
+        className
+      )}
+      disabled={!canScrollPrev}
+      onClick={scrollPrev}
+      {...props}
+    >
+      <ArrowLeft />
+      <span className="sr-only">Previous slide</span>
+    </Button>
+  )
+}
+
+function CarouselNext({
+  className,
+  variant = "outline",
+  size = "icon",
+  ...props
+}: React.ComponentProps<typeof Button>) {
+  const { orientation, scrollNext, canScrollNext } = useCarousel()
+
+  return (
+    <Button
+      data-slot="carousel-next"
+      variant={variant}
+      size={size}
+      className={cn(
+        "absolute size-8 rounded-full",
+        orientation === "horizontal"
+          ? "top-1/2 -right-12 -translate-y-1/2"
+          : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
+        className
+      )}
+      disabled={!canScrollNext}
+      onClick={scrollNext}
+      {...props}
+    >
+      <ArrowRight />
+      <span className="sr-only">Next slide</span>
+    </Button>
+  )
+}
+
+export {
+  type CarouselApi,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+}
+ for log in or has sign in too? 
+no is un related to previous req i ment is https://dummyjson.com/docs/auth just  for log in or has sign request too? 
+the test want just شامل ورود، کاربران so i think we dont need sign up componant
+is there a way here to make carosel to move on its own:"use client"
+
+import * as React from "react"
+import useEmblaCarousel, {
+  type UseEmblaCarouselType,
+} from "embla-carousel-react"
+import { ArrowLeft, ArrowRight } from "lucide-react"
+
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+
+type CarouselApi = UseEmblaCarouselType[1]
+type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
+type CarouselOptions = UseCarouselParameters[0]
+type CarouselPlugin = UseCarouselParameters[1]
+
+type CarouselProps = {
+  opts?: CarouselOptions
+  plugins?: CarouselPlugin
+    orientation?: "horizontal" | "vertical"
+  setApi?: (api: CarouselApi) => void
+}
+
+type CarouselContextProps = {
+  carouselRef: ReturnType<typeof useEmblaCarousel>[0]
+  api: ReturnType<typeof useEmblaCarousel>[1]
+  scrollPrev: () => void
+  scrollNext: () => void
+  canScrollPrev: boolean
+  canScrollNext: boolean
+} & CarouselProps
+
+const CarouselContext = React.createContext<CarouselContextProps | null>(null)
+
+function useCarousel() {
+  const context = React.useContext(CarouselContext)
+
+  if (!context) {
+    throw new Error("useCarousel must be used within a <Carousel />")
+  }
+
+  return context
+}
+
+function Carousel({
+  orientation = "horizontal",
+  opts,
+  setApi,
+  plugins,
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div"> & CarouselProps) {
+  const [carouselRef, api] = useEmblaCarousel(
+    {
+      ...opts,
+      axis: orientation === "horizontal" ? "x" : "y",
+    },
+    plugins
+  )
+  const [canScrollPrev, setCanScrollPrev] = React.useState(false)
+  const [canScrollNext, setCanScrollNext] = React.useState(false)
+
+  const onSelect = React.useCallback((api: CarouselApi) => {
+    if (!api) return
+    setCanScrollPrev(api.canScrollPrev())
+    setCanScrollNext(api.canScrollNext())
+  }, [])
+
+  const scrollPrev = React.useCallback(() => {
+    api?.scrollPrev()
+  }, [api])
+
+  const scrollNext = React.useCallback(() => {
+    api?.scrollNext()
+  }, [api])
+
+  const handleKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault()
+        scrollPrev()
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault()
+        scrollNext()
+      }
+    },
+    [scrollPrev, scrollNext]
+  )
+
+  React.useEffect(() => {
+    if (!api || !setApi) return
+    setApi(api)
+  }, [api, setApi])
+
+  React.useEffect(() => {
+    if (!api) return
+    onSelect(api)
+    api.on("reInit", onSelect)
+    api.on("select", onSelect)
+
+    return () => {
+      api?.off("select", onSelect)
+    }
+  }, [api, onSelect])
+
+  return (
+    <CarouselContext.Provider
+      value={{
+        carouselRef,
+        api: api,
+        opts,
+        orientation:
+          orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
+        scrollPrev,
+        scrollNext,
+        canScrollPrev,
+        canScrollNext,
+      }}
+    >
+      <div
+        onKeyDownCapture={handleKeyDown}
+        className={cn("relative", className)}
+        role="region"
+        aria-roledescription="carousel"
+        data-slot="carousel"
+        {...props}
+      >
+        {children}
+      </div>
+    </CarouselContext.Provider>
+  )
+}
+
+function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
+  const { carouselRef, orientation } = useCarousel()
+
+  return (
+    <div
+      ref={carouselRef}
+      className="overflow-hidden"
+      data-slot="carousel-content"
+    >
+      <div
+        className={cn(
+          "flex",
+          orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
+          className
+        )}
+        {...props}
+      />
+    </div>
+  )
+}
+
+function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
+  const { orientation } = useCarousel()
+
+  return (
+    <div
+      role="group"
+      aria-roledescription="slide"
+      data-slot="carousel-item"
+      className={cn(
+        "min-w-0 shrink-0 grow-0 basis-full",
+        orientation === "horizontal" ? "pl-4" : "pt-4",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function CarouselPrevious({
+  className,
+  variant = "outline",
+  size = "icon",
+  ...props
+}: React.ComponentProps<typeof Button>) {
+  const { orientation, scrollPrev, canScrollPrev } = useCarousel()
+
+  return (
+    <Button
+      data-slot="carousel-previous"
+      variant={variant}
+      size={size}
+      className={cn(
+        "absolute size-8 rounded-full",
+        orientation === "horizontal"
+          ? "top-1/2 left-5 -translate-y-1/2"
+          : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
+        className
+      )}
+      disabled={!canScrollPrev}
+      onClick={scrollPrev}
+      {...props}
+    >
+      <ArrowLeft />
+      <span className="sr-only">Previous slide</span>
+    </Button>
+  )
+}
+
+function CarouselNext({
+  className,
+  variant = "outline",
+  size = "icon",
+  ...props
+}: React.ComponentProps<typeof Button>) {
+  const { orientation, scrollNext, canScrollNext } = useCarousel()
+
+  return (
+    <Button
+      data-slot="carousel-next"
+      variant={variant}
+      size={size}
+      className={cn(
+        "absolute size-8 rounded-full",
+        orientation === "horizontal"
+          ? "top-1/2 right-5 -translate-y-1/2"
+          : "bottom-12 left-1/2 -translate-x-1/2 rotate-90",
+        className
+      )}
+      disabled={!canScrollNext}
+      onClick={scrollNext}
+      {...props}
+    >
+      <ArrowRight />
+      <span className="sr-only">Next slide</span>
+    </Button>
+  )
+}
+
+export {
+  type CarouselApi,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+}
+i made a some mistake my carosole i use it for games too so they too will scrol auto that i dont want should i duplicate carosel and use it separatly?
+why do i get :loginform.tsx:17  POST https://dummyjson.com/auth/login 400 (Bad Request)'use client' 
+
+import { useState } from "react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
+
+const LoginForm = () => {
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+
+  const router = useRouter()
+  const queryClient = useQueryClient()
+
+  const loginMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("https://dummyjson.com/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+          expiresInMins: 30,
+        }),
+      })
+
+      if (!res.ok) {
+        const text = await res.text()
+        throw new Error(text || "Login failed")
+      }
+
+      return res.json()
+    },
+    onSuccess: (data) => {
+      localStorage.setItem("token", data.accessToken)
+      queryClient.invalidateQueries({ queryKey: ["me"] })
+      router.push("/")
+    },
+    onError: (err: any) => {
+      setError(err.message)
+    }
+  })
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
+    loginMutation.mutate()
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-900">
+      <div className="bg-gray-800 text-white p-8 rounded-xl shadow-lg w-full max-w-sm">
+        <h1 className="text-2xl font-bold mb-6 text-center">Sign In</h1>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="p-3 rounded-lg bg-gray-700"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="p-3 rounded-lg bg-gray-700"
+          />
+          <button
+            type="submit"
+            disabled={loginMutation.isPending}
+            className="bg-amber-500 text-black py-3 rounded-lg"
+          >
+            {loginMutation.isPending ? "Logging in..." : "Sign In"}
+          </button>
+        </form>
+
+        {error && <p className="text-red-500 mt-2 text-center">{error}</p>}
+      </div>
+    </div>
+  )
+}
+
+export default LoginForm
+'use client'
+import LoginForm from "@/app/login/loginform";
+
+export default function LoginPage() {
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <LoginForm />
+    </div>
+  );
+}import { useQuery } from "@tanstack/react-query"
+
+const fetchMe=async()=>{
+const token = localStorage.getItem("token")
+  if (!token) return null
+  //if we had token we req of fetch
+ const res = await fetch("https://dummyjson.com/auth/me", {
+    headers: {
+      Authorization: Bearer ${token},
+    },
+  })
+if (!res.ok) return null
+  return res.json()
+}
+//a hook to use elswhere for ui
+export function useMe() {
+  return useQuery({
+    queryKey: ["me"],
+    queryFn: fetchMe,
+  })
+} "use client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactNode, useState } from "react";
+
+export default function QueryProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const [queryClient] = useState(() => new QueryClient());
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
+  );
+}import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import QueryProvider from "@/providers/query-provider";
+import './globals.css'
+
+import NavBar from "@/app/components/navbar";
+import Footer from "@/app/components/footer";
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "Create Next App",
+  description: "Generated by create next app",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body
+        className={${geistSans.variable} ${geistMono.variable} antialiased}
+      >
+
+        <QueryProvider>
+          <NavBar/>
+          {children}
+          </QueryProvider>
+         <Footer/>
+    
+      </body>
+    </html>
+  );
+}'use client'
+
+import Link from "next/link"
+import { useState } from "react"
+import { Search } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import { Field } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { mockGames } from "../data/mockgames"
+import { useMe } from "@/hooks/useMe"
+import { useQueryClient } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
+////search
+const NavSearch = ({
+  searchName,
+  setSearchName,
+  results,
+  handleSearch,
+  isOpen,
+}: {
+  searchName: string
+  setSearchName: (val: string) => void
+  results: typeof mockGames
+  handleSearch: () => void
+  isOpen: boolean
+}) => {
+  if (!isOpen) return null
+
+  return (
+    <Field className="absolute top-full left-0 w-full mt-2 md:mt-0 md:w-80 bg-gray-900 p-4 rounded shadow-lg z-50">
+      <ButtonGroup className="w-full">
+        <Input
+          placeholder="Type to search..."
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
+          className="flex-1"
+        />
+        <Button variant="outline" onClick={handleSearch}>
+          Search
+        </Button>
+      </ButtonGroup>
+      <ul className="mt-2 max-h-60 overflow-y-auto">
+        {results.map((item) => (
+          <li key={item.id} className="py-1 hover:text-amber-400 cursor-pointer">
+            {item.name}
+          </li>
+        ))}
+      </ul>
+    </Field>
+  )
+}
+///////navbar
+const NavBar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchName, setSearchName] = useState("")
+  const [results, setResults] = useState(mockGames)
+const{data:user}=useMe()
+const queryClient = useQueryClient()
+const router = useRouter()
+  // Links visible to all users
+  const publicLinks = [
+    { id: 1, name: "Home", path: "/" },
+    { id: 2, name: "Games", path: "/products" },
+  ]
+
+  // Login/Signup links
+  const logSignLinks = [{ id: 3, name: "Log In", path: "/login" }]
+
+  const handleSearch = () => {
+    const filtered = mockGames.filter((item) =>
+      item.name.toLowerCase().includes(searchName.toLowerCase())
+    )
+    setResults(filtered)
+  }
+
+  const onLogout = () => {
+  // 1. Remove auth token
+  localStorage.removeItem("token")
+
+  // 2. Clear cached auth data
+  queryClient.clear()
+
+  // 3. Redirect to login or home
+  router.push("/login")
+}
+
+  return (
+    <nav className="relative z-50 w-full bg-gray-900 text-amber-50 flex justify-between items-center px-6 md:px-20 h-20">
+      {/* Logo */}
+      <div>
+        <img src="/img/icon.png" alt="Website Icon" className="h-16" />
+      </div>
+
+
+      {/* Desktop Menu + Search */}
+      <div className="hidden md:flex items-center gap-6 relative">
+             {/* Search icon */}
+        <div className="relative">
+          <Search
+            onClick={() => setSearchOpen((prev) => !prev)}
+            className="w-6 h-6 text-white cursor-pointer"
+          />
+          <NavSearch
+            searchName={searchName}
+            setSearchName={setSearchName}
+            results={results}
+            handleSearch={handleSearch}
+            isOpen={searchOpen}
+          />
+        </div>
+      </div>
+        {publicLinks.map((link) => (
+          <Link key={link.id} href={link.path} className="hover:underline">
+            {link.name}
+          </Link>
+        ))}
+
+
+{user ? (
+  <>
+    <Link className="bg-amber-400 hover:bg-amber-600 px-3 py-1 rounded transition" href="/dashboard">Dashboard</Link>
+    <button className="bg-amber-400 hover:bg-amber-600 px-3 py-1 rounded transition" onClick={onLogout}>Logout</button>
+  </>
+) : (
+  <Link className="bg-amber-400 hover:bg-amber-600 px-3 py-1 rounded transition" href="/login">Login</Link>
+)}
+
+         
+
+      {/* Mobile Toggle Button */}
+      <button
+        className="md:hidden z-50"
+        onClick={() => setIsMenuOpen((prev) => !prev)}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          className="w-8 h-8"
+        >
+          <path d="M2 4.75h16v1.5H2zm0 4.5h16v1.5H2zm0 4.5h16v1.5H2z" />
+        </svg>
+      </button>
+
+      {/* Mobile Menu */}
+      <ul
+        className={md:hidden absolute top-full left-0 w-full bg-gray-900 flex flex-col gap-4 p-6 transition-all duration-300 ${
+          isMenuOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-5 pointer-events-none"
+        }}
+      >
+        {publicLinks.map((link) => (
+          <Link
+            key={link.id}
+            href={link.path}
+            className="hover:underline"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            {link.name}
+          </Link>
+        ))}
+        {logSignLinks.map((link) => (
+          <Link
+            key={link.id}
+            href={link.path}
+            className="bg-amber-400 hover:bg-amber-600 px-3 py-1 rounded transition"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            {link.name}
+          </Link>
+        ))}
+
+        {/* Mobile Search */}
+        <div className="mt-4 relative">
+          <Search
+            onClick={() => setSearchOpen((prev) => !prev)}
+            className="w-6 h-6 text-white cursor-pointer"
+          />
+          <NavSearch
+            searchName={searchName}
+            setSearchName={setSearchName}
+            results={results}
+            handleSearch={handleSearch}
+            isOpen={searchOpen}
+          />
+        </div>
+      </ul>
+    </nav>
+  )
+}
+
+export default NavBar
+
+
+i tested and got it i must have use one of the doc defult not on my own
+how to make https://ui.shadcn.com/docs/components/radix/pagination to a page of all products a grid of 9col 3 row and  navigating page with pagination  
+teach me dont just give me a code

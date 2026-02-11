@@ -11,7 +11,7 @@ return(
   <Link href={`/products/${game.id}`}>
     <CardContent className="p-0 relative bg-gray-900">
       <img
-        src={game.thumbnail}
+        src={game.background_image}
         alt={game.name}
         className="w-full h-60 md:h-80 object-cover"
       />

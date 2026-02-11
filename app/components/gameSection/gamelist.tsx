@@ -1,53 +1,71 @@
+'use client';
 
-import { mockGames } from '@/app/data/mockgames';
-//import { fetchGames } from '@/lib/api-calls';
 import GameCarousel from './gamesCarousel';
 import Link from 'next/link';
 
-///async
+interface Game {
+  id: number;
+  slug: string;
+  name: string;
+  released: string;
+  tba: boolean;
+  background_image: string;
+  rating: number;
+  rating_top: number;
+  ratings: any;
+  ratings_count: number;
+  reviews_text_count: string;
+  added: number;
+  added_by_status: any;
+  metacritic: number;
+  playtime: number;
+  suggestions_count: number;
+  updated: string;
 
-
-const GameList=()=>{
-
-//const games = await fetchGames(30)
-const actionGames = mockGames.filter(game =>
-  game.genres.some(g => g.slug === "action")
-);
-
-const rpgGames = mockGames.filter(game =>
-  game.genres.some(g => g.slug === "rpg")
-);
-
-const openWorldGames = mockGames.filter(game =>
-  game.genres.some(g => g.slug === "open-world")
-);
-const gameCategory=[{name:'action Games',genres:actionGames},{name:'rpg Games',genres:rpgGames},{name:'open World Games',genres:openWorldGames}
-]
-   return(
-   <>
-  
-    <div className="space-y-8 px-5 md:px-10 bg-gray-900 pt-10 pb-20">
-
-{gameCategory.map((m)=>( <><div className="flex justify-between items-center ">
-    <h2 className="text-2xl md:text-3xl text-amber-50 font-bold capitalize hover:text-amber-300 transition-colors duration-300  ">
-      {m.name}
-    </h2>
-    <Link
-      href="#"
-      className="text-sm border-2 p-1 md:text-base text-amber-300 hover:text-amber-50 font-semibold transition-colors"
-    >
-      See More
-    </Link>
-  </div>
-  <GameCarousel gamesList={m.genres} /></>))}
-</div>
-   </>
-  
-
-
-
-
-
-   ) 
 }
-export default GameList
+
+
+const GameList = ({ gamesList }) => {
+  // 1️⃣ Get all unique genres
+  const genreMap: Record<string, { id: number; name: string; games: Game[] }> = {};
+
+  gamesList.forEach((game) => {
+    game.genres.forEach((genre) => {
+      if (!genreMap[genre.slug]) {
+        genreMap[genre.slug] = { id: genre.id, name: genre.name, games: [] };
+      }
+      genreMap[genre.slug].games.push(game);
+    });
+  });
+
+  // Convert to array for mapping
+  const gameCategories = Object.keys(genreMap).map((slug) => ({
+    slug,
+    id: genreMap[slug].id,
+    name: genreMap[slug].name,
+    games: genreMap[slug].games,
+  }));
+
+  return (
+    <div className="space-y-8 px-5 md:px-10 bg-gray-900 pt-10 pb-20">
+      {gameCategories.map((category) => (
+        <div key={category.id}>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl md:text-3xl text-amber-50 font-bold capitalize hover:text-amber-300 transition-colors duration-300">
+              {category.name}
+            </h2>
+            <Link
+              href={`/products/results?genres=${category.slug}`}
+              className="text-sm border-2 p-1 md:text-base text-amber-300 hover:text-amber-50 font-semibold transition-colors"
+            >
+              See More
+            </Link>
+          </div>
+          <GameCarousel gamesList={category.games} />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default GameList;

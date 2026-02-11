@@ -1,27 +1,28 @@
 'use client'
-
 import { useEffect, useState } from "react"
 import GameCard from "../components/gameSection/gamesCard"
-import { mockGames } from "../data/mockgames"
-import { Pagination, PaginationItem } from "@/components/ui/pagination"
-import GameMultiSelect from "../components/gameSection/advanceSearch"
+import { useGames } from '@/providers/context';
+
+
 
 const Products = () => {
+
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 9
-
-  const totalPages = Math.ceil(mockGames.length / itemsPerPage)
+  const { games, isLoading, error } = useGames();
+ // Calculate total pages based on fetched data
+  const totalPages = Math.ceil(games.length / itemsPerPage)
 
   // Slice products for the current page
-  const currentProducts = mockGames.slice(
+  const currentProducts = games.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   )
-
+  // Scroll to top on page change
 useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [currentPage])
-
+  // Pagination functions
   const goPrev = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1))
   }
@@ -30,11 +31,14 @@ useEffect(() => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
   }
 
+  // Handle loading and error states
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error</div>;
   return (
-    <section className="p-10 bg-gray-900 min-h-screen">
+    <section className="p-10 lg:px-50 bg-gray-900 min-h-screen">
        
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
-        {currentProducts.map((game) => (
+      <div className="grid grid-cols-2 sm:grid-cols-3  md:grid-cols-4  lg:grid-cols-6 gap-6 mb-6">
+        {games.map((game:any) => (
           <GameCard key={game.id} game={game} />
         ))}
       </div>
