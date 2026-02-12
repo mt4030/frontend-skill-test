@@ -60,7 +60,7 @@ const LoginForm = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="p-3 rounded-lg bg-gray-700"
-            defaultValue={'emilys'}
+           
           />
           <input
             type="password"
@@ -68,7 +68,7 @@ const LoginForm = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="p-3 rounded-lg bg-gray-700"
-            defaultValue={'emilyspass'}
+           
           />
           <button
             type="submit"

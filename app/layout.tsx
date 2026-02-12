@@ -23,8 +23,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       
-
-
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} newestOnTop closeOnClick pauseOnHover theme="dark" />
         

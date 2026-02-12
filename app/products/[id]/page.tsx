@@ -3,6 +3,7 @@
 import { use } from "react";
 import { useGames } from "@/providers/context";
 import { Heart, Bookmark, Laptop, Smartphone, Tv } from "lucide-react"; // example icons
+import GameError from "./GameError";
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;
@@ -27,9 +28,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
 
   if (!game)
     return (
-      <div className="min-h-screen flex items-center justify-center text-white">
-        Game not found
-      </div>
+     <GameError/>
     );
 
   return (

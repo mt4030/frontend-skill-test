@@ -1,4 +1,4 @@
-import ResultsClient from "@/app/components/ResultsClient"
+import ResultsClient from "./ResultsClient"
 
 interface PageProps {
   searchParams: {
