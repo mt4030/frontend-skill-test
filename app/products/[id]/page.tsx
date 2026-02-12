@@ -32,11 +32,15 @@ const ProductPage = ({ params }: ProductPageProps) => {
     );
 
   return (
-    <section className="relative bg-gray-900 min-h-screen text-white pb-10">
-      <div
-        className="h-[60vh] bg-cover bg-center"
-        style={{ backgroundImage: `url(${game.background_image})` }}
-      />
+    <div className="relative bg-gray-900 min-h-screen text-white pb-10">
+     <div className="relative w-full h-[50vh] overflow-hidden">
+  <img
+    src={game.background_image}
+    alt={game.name}
+    className="w-full h-full object-cover"
+  />
+</div>
+
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/90 to-transparent" />
         <div className="absolute bottom-0 h-[40%] w-full bg-gradient-to-t from-black to-transparent" />
@@ -111,7 +115,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

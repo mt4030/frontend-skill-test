@@ -24,7 +24,7 @@ export default function ResultsClient({ searchParams }: Props) {
   const initialGenreSlugs = searchParams.genres?.split(',').filter(Boolean) ?? []
   const initialPlatformSlugs = searchParams.platforms?.split(',').filter(Boolean) ?? []
   const initialTagSlugs = searchParams.tags?.split(',').filter(Boolean) ?? []
-  const initialItems = Number(searchParams.items ?? '10')
+  const initialItems = Number(searchParams.items ?? '20')
 
   const [filters, setFilters] = useState({
     searchTerm: initialSearch,
@@ -102,9 +102,7 @@ export default function ResultsClient({ searchParams }: Props) {
       />
 
       <div className="mt-8">
-        <p className="text-gray-400 mb-4">
-          Found {filteredGames.length} game{filteredGames.length !== 1 ? 's' : ''}
-        </p>
+       
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredGames.map(game => (

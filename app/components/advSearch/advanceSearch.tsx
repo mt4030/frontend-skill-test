@@ -31,7 +31,7 @@ export default function AdvancedGameFilter({
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
   const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>([])
   const [selectedTags, setSelectedTags] = useState<Tag[]>([])
-  const [itemsPerPage, setItemsPerPage] = useState<{ name: string }>({ name: '10' })
+  const [itemsPerPage, setItemsPerPage] = useState<{ name: string }>({ name: '5' })
 
   // Extract unique genres from all games
   const allGenres: Genre[] = Array.from(
@@ -178,13 +178,13 @@ export default function AdvancedGameFilter({
         />
 
         <Dropdown
-          label="Items per page"
+          label="Items per number"
           data={[
             { name: '2' }, 
             { name: '5' }, 
             { name: '10' }, 
-            { name: '20' }, 
-            { name: '50' }
+            { name: '20' } 
+            
           ]}
           value={itemsPerPage}
           placeholder="Select items"

@@ -1,9 +1,9 @@
 'use client'
 
 import HeroCarousel from './heroCarousel'
-import AdvancedGameFilter from '../advSearch/advanceSearch'
+
 import { useRouter } from 'next/navigation'
-import { Game,Filters } from '@/lib/type'
+import { Game } from '@/lib/type'
 
 interface HeroSectionProps {
   gamesList: Game[]
@@ -12,38 +12,27 @@ interface HeroSectionProps {
 
 const HeroSection: React.FC<HeroSectionProps> = ({ gamesList }) => {
   const router = useRouter()
-
-  const handleFiltersChange = (filters: Filters) => {
-    const query = new URLSearchParams()
-
-    if (filters.searchTerm) query.set('q', filters.searchTerm)
-    if (filters.selectedGenres.length)
-      query.set('genres', filters.selectedGenres.map(g => g.slug).join(','))
-
-    if (filters.selectedPlatforms.length)
-      query.set('platforms', filters.selectedPlatforms.map(p => p.slug).join(','))
-
-    if (filters.selectedTags.length)
-      query.set('tags', filters.selectedTags.map(t => t.slug).join(','))
-
-    query.set('items', String(filters.itemsPerPage))
-
-    router.push(`/products/results?${query.toString()}`)
+  const handleClick = () => {
+    router.push('/products/results')
   }
 
   return (
     <>
       <HeroCarousel gamesList={gamesList} />
-      <h2 className="text-white text-3xl font-bold mt-10 text-center">
-        Advanced Search
-      </h2>
-      <AdvancedGameFilter
-        initialGenres={[]}
-        initialPlatforms={[]}
-        initialTags={[]}
-        initialSearch=""
-        onChange={handleFiltersChange}
-      />
+      <div className="max-w-7xl mb-5 mx-auto mt-5 p-6 bg-gray-900 rounded-3xl text-center flex flex-col items-center justify-center gap-6 shadow-lg">
+      <p className="text-3xl md:text-4xl font-bold text-white"> 
+        Looking for somethings <span className='text-red-700'>specific</span>?
+      </p>
+      <p className="text-gray-400 text-lg max-w-xl">
+        Use our Advanced Search to filter games by genre, platform, tags, or search terms. Find exactly what you want in seconds!
+      </p>
+      <button
+        onClick={handleClick}
+        className="px-8 py-4 bg-amber-500 text-black font-semibold rounded-2xl hover:bg-amber-400 transition-all shadow-md hover:shadow-xl"
+      >
+        Go to Advanced Search
+      </button>
+    </div>
     </>
   )
 }
