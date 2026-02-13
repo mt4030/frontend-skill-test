@@ -1,14 +1,15 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Game } from '@/lib/type'
+import Link from "next/link";
 interface GameCardProps {
   game: Game;
-   isFavorite?: boolean;       // optional
-  isBookmarked?: boolean;     // optional
-  onFavorite?: () => void;    // optional
-  onBookmark?: () => void;    // optional
+   isFavorite?: boolean;      
+  isBookmarked?: boolean;    
+  onFavorite?: () => void;    
+  onBookmark?: () => void;  
 }
-import Link from "next/link";
+
 const GameCard=({ game }: GameCardProps)=>{
 return(
 <Card className="relative w-full rounded group overflow-hidden">

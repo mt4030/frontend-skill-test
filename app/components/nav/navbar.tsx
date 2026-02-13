@@ -9,11 +9,13 @@ import { toast } from "react-toastify"
 import NavSearch from "./navsearch"
 import { Avatarprofil } from "../avatar"
 import SiteIcon from "../siteicon"
-
+import { Button } from "@/components/ui/button"
 const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isAvatarOpen, setIsAvatarOpen] = useState(false)
+  //for checkng auth for ui
   const { data: user } = useMe()
+  
   const queryClient = useQueryClient()
   const router = useRouter()
 
@@ -38,7 +40,6 @@ const NavBar = () => {
         {/* Left */}
      <SiteIcon/>
 
-        {/* Center */}
     
         <NavSearch/>
 
@@ -54,13 +55,13 @@ const NavBar = () => {
 
           {user ? (
             <div className="relative">
-              <button
+              <Button
                 onClick={() => setIsAvatarOpen(prev => !prev)}
                 className="flex items-center gap-2 hover:bg-gray-800 p-1 rounded-full"
               >
                 <Avatarprofil />
                 <ChevronDown className="w-4 h-4" />
-              </button>
+              </Button>
 
               {isAvatarOpen && (
                 <div className="absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-700 rounded shadow-lg">
@@ -71,12 +72,12 @@ const NavBar = () => {
                   >
                     Dashboard
                   </Link>
-                  <button
+                  <Button
                     onClick={onLogout}
                     className="w-full text-left px-4 py-2 hover:bg-gray-700"
                   >
                     Logout
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
@@ -96,7 +97,7 @@ const NavBar = () => {
 
         <img src="/img/icon.png" alt="Website Icon" className="h-12" />
 
-          <button onClick={() => setIsMobileMenuOpen(prev => !prev)}>
+          <Button onClick={() => setIsMobileMenuOpen(prev => !prev)}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
@@ -105,7 +106,7 @@ const NavBar = () => {
             >
               <path d="M2 4.75h16v1.5H2zm0 4.5h16v1.5H2zm0 4.5h16v1.5H2z" />
             </svg>
-          </button>
+          </Button>
         </div>
 
     
@@ -126,7 +127,7 @@ const NavBar = () => {
           {user ? (
             <>
               <Link href="/dashboard">Dashboard</Link>
-              <button onClick={onLogout}>Logout</button>
+              <Button onClick={onLogout}>Logout</Button>
             </>
           ) : (
             <Link href="/login">Login</Link>

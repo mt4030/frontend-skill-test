@@ -9,7 +9,6 @@ import { useGames } from "@/providers/context";
 export default function Dashboard() {
   const router = useRouter();
 
-  // Hooks always run first
   const { data: user, isLoading } = useMe();
   const { games, favorite, bookmark, handleFavorite, handleBookmark } = useGames();
 
@@ -20,7 +19,7 @@ export default function Dashboard() {
     }
   }, [isLoading, user, router]);
 
-  // While loading or redirecting, render a loader
+
   if (isLoading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center text-white">
@@ -29,7 +28,7 @@ export default function Dashboard() {
     );
   }
 
-  // Filter games for user bookmarks/favorites
+
   const bookmarkedGames = games.filter((g) => bookmark.includes(g.id));
   const favoriteGames = games.filter((g) => favorite.includes(g.id));
 

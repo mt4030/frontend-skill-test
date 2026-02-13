@@ -1,7 +1,6 @@
 'use client'
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/app/components/ui/carousel'
 import Link from 'next/link'
-import { Play } from "lucide-react";
 
 
 
@@ -13,7 +12,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ gamesList  }) => {
   return (
     <Carousel autoplay autoplayDelay={9000} >
       <CarouselContent className="h-full">
-        {gamesList .map(game => (
+        {gamesList.map(game => (
           <CarouselItem key={game.id} className="relative w-full h-full">
         <div className="w-full h-[60vh] overflow-hidden relative">
   <img
@@ -29,7 +28,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ gamesList  }) => {
   <img
       src={game.background_image}
       alt={game.name}
-      className="w-25 h-25 rounded-full object-cover" // Small thumbnail style
+      className="w-25 h-25 rounded-full object-cover" 
     />
    
     <span className="text-white text-xl font-bold hover:text-yellow-500">
@@ -37,8 +36,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ gamesList  }) => {
     </span>
   </div>
 </Link>
-
-          </CarouselItem>
+</CarouselItem>
         ))}
       </CarouselContent>
       <CarouselPrevious />

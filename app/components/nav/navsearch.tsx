@@ -48,9 +48,9 @@ const NavSearch = () => {
   }
 
   const handleSuggestionClick = (gameId: number) => {
-    setSearchTerm('') // Clear search input after selection
-    router.push(`/products/${gameId}`) // Navigate to the selected game's page
-    setLiveSearchResults([]) // Clear suggestions
+    setSearchTerm('') 
+    router.push(`/products/${gameId}`) 
+    setLiveSearchResults([])
   }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -83,7 +83,7 @@ const NavSearch = () => {
               key={game.id}
               href={`/products/${game.id}`}
               className="flex items-center gap-3 px-3 py-2 hover:bg-gray-800 transition"
-              onClick={() => handleSuggestionClick(game.id)} // Call the handleSuggestionClick function
+              onClick={() => handleSuggestionClick(game.id)} 
             >
               {game.background_image && (
                 <img

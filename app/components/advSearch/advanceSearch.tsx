@@ -1,5 +1,24 @@
 'use client'
 
+/**
+ * AdvancedGameFilter
+ *
+ * Provides advanced filtering UI for games list:
+ * - Text search with live suggestions
+ * - Filter by genres, platforms, and tags
+ * - Control number of items per page
+ *
+ * Behavior:
+ * - Builds query params and navigates to results page
+ * - Syncs selected filters with parent via onChange callback
+ * - Live search activates after 3+ characters
+ *
+ * Depends on:
+ * - useGames() context for games data
+ * - Next.js router for navigation
+ */
+
+
 import { useState, useEffect } from 'react'
 import { useGames } from '@/providers/context'
 import { useRouter } from 'next/navigation'

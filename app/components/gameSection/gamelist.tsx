@@ -2,7 +2,7 @@
 
 import GameCarousel from './gamesCarousel';
 import Link from 'next/link';
-import { Game, Genre } from '@/lib/type'
+import { Game } from '@/lib/type'
 interface GameListProps {
   gamesList: Game[]
 }
@@ -14,7 +14,7 @@ interface GenreMapItem {
 }
 
 const GameList: React.FC<GameListProps> = ({ gamesList }) => {
-  // 1️⃣ Get all unique genres
+  //  Get all unique genres
   const genreMap: Record<string, GenreMapItem> = {};
 
   gamesList.forEach((game:any) => {
