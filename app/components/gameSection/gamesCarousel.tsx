@@ -17,7 +17,7 @@ export default function GameCarousel({gamesList}: gameCarouselProps) {
       opts={{
         align: "start",
       }}
-      className=" mb-10 px-2 md:px-20 lg:px-50  rounded-2xl  "
+      className=" mb-10 px-2 md:px-20 lg:px-50 rounded-2xl  "
     >
     <CarouselContent className="-ml-4">
     {gamesList.map((game) => (

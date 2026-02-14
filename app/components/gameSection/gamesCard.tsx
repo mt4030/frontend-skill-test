@@ -1,14 +1,8 @@
 
 import { Card, CardContent } from "@/components/ui/card"
-import { Game } from '@/lib/type'
+import {GameCardProps} from '@/lib/type'
 import Link from "next/link";
-interface GameCardProps {
-  game: Game;
-   isFavorite?: boolean;      
-  isBookmarked?: boolean;    
-  onFavorite?: () => void;    
-  onBookmark?: () => void;  
-}
+
 
 const GameCard=({ game }: GameCardProps)=>{
 return(
@@ -26,7 +20,6 @@ return(
 
       {/* Bottom info */}
       <div className="absolute bottom-0 left-0 h-[25%] w-full bg-black/70 text-white p-2">
-  
         <h3 className="text-sm md:text-base font-semibold text-amber-50">
           {game.name}
         </h3>
@@ -34,8 +27,6 @@ return(
     </CardContent>
   </Link>
 </Card>
-
-
 )
 }
 export default GameCard

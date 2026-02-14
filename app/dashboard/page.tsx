@@ -46,12 +46,6 @@ export default function Dashboard() {
           Home
         </button>
         <button
-          onClick={() => router.push("/profile")}
-          className="mb-4 w-full px-4 py-2 bg-gray-800 border border-amber-500 text-amber-300 rounded hover:bg-amber-400 hover:text-black"
-        >
-          Profile
-        </button>
-        <button
           onClick={() => {
             localStorage.removeItem("token");
             router.push("/");

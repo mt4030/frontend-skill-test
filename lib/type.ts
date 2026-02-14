@@ -1,5 +1,4 @@
 // ================= RAWG API TYPES =================
-
 import { ReactNode } from "react"
 
 export interface Genre {
@@ -19,6 +18,12 @@ export interface PlatformInfo {
     minimum?: string
     recommended?: string
   }
+}
+
+export interface Platform {
+  id: number
+  slug: string
+  name: string
 }
 
 export interface Tag {
@@ -59,7 +64,6 @@ export interface Game {
 }
 
 // ================= CONTEXT =================
-
 export interface GameContextType {
   games: Game[]
   isLoading: boolean
@@ -73,30 +77,13 @@ export interface GameContextType {
 }
 
 // ================= PROPS =================
-
 export interface GamesListProps {
   gamesList: Game[]
 }
 export interface GameProviderProps {
-  children: ReactNode;
-}
-export interface Genre {
-  id: number
-  slug: string
-  name: string
+  children: ReactNode
 }
 
-export interface Platform {
-  id: number
-  slug: string
-  name: string
-}
-
-export interface Tag {
-  id: number
-  slug: string
-  name: string
-}
 export interface Filters {
   searchTerm: string
   selectedGenres: Genre[]
@@ -104,10 +91,45 @@ export interface Filters {
   selectedTags: Tag[]
   itemsPerPage: number
 }
+
+export interface GameCardProps {
+  game: Game
+  isFavorite?: boolean
+  isBookmarked?: boolean
+  onFavorite?: () => void
+  onBookmark?: () => void
+}
+
+
 export interface GameCardProps {
   game: Game;
-  isFavorite?: boolean;
-  isBookmarked?: boolean;
-  onFavorite?: () => void;
-  onBookmark?: () => void;
+   isFavorite?: boolean;      
+  isBookmarked?: boolean;    
+  onFavorite?: () => void;    
+  onBookmark?: () => void;  
+}
+
+export interface GameListProps {
+  gamesList: Game[]
+}
+
+export interface GenreMapItem {
+  id: number
+  name: string
+  games: Game[]
+}
+export interface SelectedFiltersProps {
+  selectedGenres: Genre[];
+  selectedPlatforms: Platform[];
+  selectedTags: Tag[];
+  onRemoveGenre: (slug: string) => void;
+  onRemovePlatform: (slug: string) => void;
+  onRemoveTag: (slug: string) => void;
+}
+export interface AdvancedGameFilterProps {
+  initialGenres?: string[];        
+  initialPlatforms?: string[];     
+  initialTags?: string[];          
+  initialSearch?: string;          
+  onChange: (filters: Filters) => void; 
 }

@@ -23,8 +23,8 @@ const NavSearch = () => {
       game.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
-    setLiveSearchResults(results.slice(0, 5)) // Limit results to top 5
-  }, [searchTerm, games]) // Re-run when searchTerm or games change
+    setLiveSearchResults(results.slice(0, 5)) 
+  }, [searchTerm, games]) 
 
   // Close suggestions when clicking outside
   useEffect(() => {

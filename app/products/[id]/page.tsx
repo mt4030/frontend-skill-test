@@ -15,7 +15,7 @@ const platformIcon = (name: string) => {
   if (lower.includes("playstation") || lower.includes("ps")) return <Tv className="w-4 h-4" />;
   if (lower.includes("xbox")) return <Tv className="w-4 h-4" />;
   if (lower.includes("switch") || lower.includes("mobile")) return <Smartphone className="w-4 h-4" />;
-  return <Laptop className="w-4 h-4" />; // default icon
+  return <Laptop className="w-4 h-4" />; 
 };
 
 const ProductPage = ({ params }: ProductPageProps) => {
@@ -114,6 +114,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
             </div>
           </div>
         </div>
+    
       </div>
     </div>
   );
