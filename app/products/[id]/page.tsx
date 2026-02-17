@@ -42,8 +42,8 @@ const ProductPage = ({ params }: ProductPageProps) => {
 </div>
 
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/90 to-transparent" />
-        <div className="absolute bottom-0 h-[40%] w-full bg-gradient-to-t from-black to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black via-black/90 to-transparent" />
+        <div className="absolute bottom-0 h-[40%] w-full bg-linear-to-t from-black to-transparent" />
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 md:-mt-60 -mt-93">
@@ -51,7 +51,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
           <img
             src={game.background_image}
             alt={game.name}
-            className="w-full md:w-[420px] h-auto rounded-xl shadow-2xl"
+            className="w-full md:w-105 h-auto rounded-xl shadow-2xl"
           />
 
           <div className="flex flex-col gap-4 flex-1">

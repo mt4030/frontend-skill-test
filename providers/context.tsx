@@ -58,7 +58,7 @@ export const GameProvider = ({ children }: GameProviderProps) => {
   const handleFavorite = (gameId: number) => toggleItem(favorite, setFavorite, gameId);
 
   // ================= CONTEXT VALUE =================
-  const value: GameContextType = { games, isLoading, error, favorite, bookmark, handleBookmark, handleFavorite };
+  const value: GameContextType = { games, isLoading, error, favorite, bookmark, handleBookmark, handleFavorite ,setGames};
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 };
 
@@ -67,3 +67,6 @@ export const useGames = (): GameContextType => {
   if (!context) throw new Error('useGames must be used within a GameProvider');
   return context;
 };
+
+
+

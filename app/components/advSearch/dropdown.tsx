@@ -50,8 +50,8 @@ export default function Dropdown<T extends DropdownItem>({
   }
 
   return (
-    <div className="w-full">
-      {label && <label className="mb-2 block text-sm text-gray-300">{label}</label>}
+    <div className="w-full ">
+      {label && <label className="mb-2 block text-sm bg-gray-90 text-gray-300">{label}</label>}
       
       <Listbox value={value ?? undefined} onChange={onChange} multiple={multiple}>
         <div className="relative">

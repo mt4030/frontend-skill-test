@@ -6,10 +6,10 @@ import { useMe } from "@/hooks/useMe"
 import { useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { toast } from "react-toastify"
-import NavSearch from "./navsearch"
 import { Avatarprofil } from "../avatar"
 import SiteIcon from "../siteicon"
 import { Button } from "@/components/ui/button"
+import { GameSearch } from "./GameSearch"
 const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isAvatarOpen, setIsAvatarOpen] = useState(false)
@@ -40,11 +40,8 @@ const NavBar = () => {
         {/* Left */}
      <SiteIcon/>
 
-    
-        <NavSearch/>
-
+<GameSearch/>
        
-
         {/* Right */}
         <div className="flex-1 flex justify-end items-center gap-10">
           {publicLinks.map(link => (
@@ -74,7 +71,7 @@ const NavBar = () => {
                   </Link>
                   <Button
                     onClick={onLogout}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-700"
+                    className="w-full text-left px-4 py-2  hover:bg-gray-700"
                   >
                     Logout
                   </Button>
@@ -127,12 +124,12 @@ const NavBar = () => {
           {user ? (
             <>
               <Link href="/dashboard">Dashboard</Link>
-              <Button onClick={onLogout}>Logout</Button>
+              <Button className="bg-amber-500" onClick={onLogout}>Logout</Button>
             </>
           ) : (
             <Link href="/login">Login</Link>
           )}
-             <NavSearch/>
+             <GameSearch/>
         </ul>
       )}
     </nav>

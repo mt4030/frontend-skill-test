@@ -71,7 +71,7 @@ export interface GameContextType {
 
   favorite: number[]
   bookmark: number[]
-
+ setGames: React.Dispatch<React.SetStateAction<Game[]>>;
   handleBookmark: (gameId: number) => void
   handleFavorite: (gameId: number) => void
 }

@@ -35,11 +35,15 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col md:flex-row">
       {/* Sidebar */}
-      <aside className="w-full md:w-60 bg-gray-950 p-6 shrink-0">
-        <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
+      <aside className="w-full md:w-60 bg-gray-950 p-6 shrink-0 flex flex-col justify-between md:pb-25">
+        <div>
+         <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
         <p className="mb-2">Welcome, {user.firstName || "Gamer"}!</p>
-        <p className="mb-6 text-gray-400">{games.length} games available</p>
-        <button
+      
+        </div>
+        
+        <div className="">
+          <button
           onClick={() => router.push("/")}
           className="mb-4 w-full px-4 py-2 bg-amber-500 text-black rounded hover:bg-amber-400"
         >
@@ -54,6 +58,8 @@ export default function Dashboard() {
         >
           Logout
         </button>
+        </div>
+        
       </aside>
 
       {/* Main Content */}
@@ -69,7 +75,7 @@ export default function Dashboard() {
           {bookmarkedGames.length === 0 ? (
             <p className="text-gray-400">You haven't bookmarked any games yet.</p>
           ) : (
-            <div className="flex space-x-4 overflow-x-auto py-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
+            <div className="flex space-x-4 overflow-x-auto py-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900 max-w-120">
               {bookmarkedGames.map((game) => (
                 <GameCard
                   key={game.id}
@@ -95,7 +101,7 @@ export default function Dashboard() {
           {favoriteGames.length === 0 ? (
             <p className="text-gray-400">You haven't marked any favorites yet.</p>
           ) : (
-            <div className="flex space-x-4 overflow-x-auto py-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
+            <div className="flex space-x-4 overflow-x-auto py-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900 max-w-120">
               {favoriteGames.map((game) => (
                 <GameCard
                   key={game.id}

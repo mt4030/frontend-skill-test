@@ -26,7 +26,7 @@ const GameList: React.FC<GameListProps> = ({ gamesList }) => {
   }));
 
   return (
-    <div className="space-y-8 px-5 md:px-10 bg-gray-950 pt-15 pb-20">
+    <div className="space-y-8 px-5 md:px-10 bg-gray-800 pt-15 pb-20">
       {gameCategories.map((category) => (
         <div key={category.id}>
           <div className="flex justify-between items-center mb-4">

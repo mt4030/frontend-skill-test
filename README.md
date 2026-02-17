@@ -10,8 +10,8 @@ This project demonstrates real-world frontend architecture including API integra
 
 ## 🚀 Live Features
 
-* 🔍 Live Search with suggestions
-* 🎯 Advanced Filtering (Genres, Platforms, Tags, Items per page)
+* 🔍 Live Search with suggestions from rawg database
+* 🎯 Advanced Filtering (Genres, Platforms, Tags, Items per page) using headlessui
 * 📚 Game Categories by Genre
 * ❤️ Favorites System
 * 🔖 Bookmark System
@@ -19,7 +19,7 @@ This project demonstrates real-world frontend architecture including API integra
 * 📊 User Dashboard
 * 🧭 Pagination
 * 💾 LocalStorage Caching
-* ⚡ React Query Data Fetching
+* ⚡ React Query Data Fetching for auth and live search in navbar
 * 🎨 Tailwind UI + Shadcn Components
 
 ---
@@ -54,7 +54,7 @@ app/
  └── components/
      ├── heroSection/
      ├── gameSection/
-     ├── nav/
+     ├── nav/              # can search from api database
      ├── advSearch/
      └── ui/
 

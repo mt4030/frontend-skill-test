@@ -29,7 +29,6 @@ export default function Home() {
 
   return (
     <main className="flex flex-col">
-      {/* Landing/Home page */}
       <HeroSection gamesList={games} />
       <GameList gamesList={games} />
     </main>
