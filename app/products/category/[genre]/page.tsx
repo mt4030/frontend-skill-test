@@ -44,7 +44,7 @@ const GenrePage = ({ params }: PageProps) => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-950 px-10 pt-20">
+    <div className="flex flex-col min-h-screen p-10 lg:px-50  bg-gray-900  px-10 pb-15 pt-20">
       <h1 className="text-3xl font-bold text-amber-50 capitalize mb-6">
         {genre.replace('-', ' ')}
       </h1>

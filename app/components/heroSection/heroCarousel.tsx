@@ -13,14 +13,14 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ gamesList  }) => {
     <Carousel autoplay autoplayDelay={9000} >
       <CarouselContent className="h-full">
         {gamesList.map(game => (
-          <CarouselItem key={game.id} className="relative w-full h-full">
+          <CarouselItem key={game.id} className="relative w-full h-full ">
         <div className="w-full h-[60vh] overflow-hidden relative">
   <img
     src={game.background_image}
     alt={game.name}
-    className="w-full h-full object-cover max-w-full "
+    className="w-full h-full object-cover max-w-full  "
   />
- <div className="absolute inset-0 bg-linear-to-r from-black/90 to-black/20"></div>
+ <div className="absolute inset-0 bg-linear-to-r from-black/90 to-black/20 " ></div>
 
 </div>
 <Link href={`/products/${game.id}`} className="absolute md:bottom-1/4 md:left-50 bottom-1/5 left-20 ">

@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import GameCard from "../components/gameSection/gamesCard";
 import { useMe } from "@/hooks/useMe";
 import { useGames } from "@/providers/context";
+import Loading from "../components/Loading";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -20,13 +21,7 @@ export default function Dashboard() {
   }, [isLoading, user, router]);
 
 
-  if (isLoading || !user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-white">
-        Loading...
-      </div>
-    );
-  }
+  if (isLoading || !user) return <Loading/> 
 
 
   const bookmarkedGames = games.filter((g) => bookmark.includes(g.id));

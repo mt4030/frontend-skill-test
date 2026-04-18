@@ -31,10 +31,8 @@ const{setGames}=useGames()
   // Handle clicking outside dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        suggestionsRef.current &&
-        !suggestionsRef.current.contains(event.target as Node)
-      ) {
+      if ( suggestionsRef.current &&!suggestionsRef.current.contains(event.target as Node)) 
+        {
         setShowSuggestions(false)
       }
     }
@@ -65,7 +63,7 @@ const handleSuggestionClick = (game: any) => {
 
 
   return (
-    <Card className="md:mx-5 w-full md:w-150 lg:w-200 bg-gray-900 border border-gray-800 shadow-lg  ">
+    <Card className="md:mx-5 w-full  md:w-150 lg:w-200 bg-gray-900 border border-gray-800 shadow-lg  ">
     
       <CardContent className="space-y-4 relative ">
       <Search className="w-7 h-7 text-white cursor-pointer absolute top-1.5 right-1.5"/>
@@ -120,6 +118,7 @@ const handleSuggestionClick = (game: any) => {
                     Released: {game.released || "Unknown"}
                   </p>
                 </div>
+               
               </div>
             ))}
           </div>

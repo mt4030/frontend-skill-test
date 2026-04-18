@@ -3,9 +3,16 @@
 import GameCarousel from './gamesCarousel';
 import Link from 'next/link';
 import {GameListProps,GenreMapItem } from '@/lib/type'
+import { Button } from "@/components/ui/button";
 
 
 const GameList: React.FC<GameListProps> = ({ gamesList }) => {
+  
+const handleclick=()=>{
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+}
   //  Get all unique genres
   const genreMap: Record<string, GenreMapItem> = {};
   gamesList.forEach((game:any) => {
@@ -44,6 +51,13 @@ const GameList: React.FC<GameListProps> = ({ gamesList }) => {
           <GameCarousel gamesList={category.games} />
         </div>
       ))}
+
+
+<div className='flex justify-center pt-5'>
+     <Button onClick={handleclick} className="w-50 bg-amber-600 hover:bg-amber-500">back to top</Button>
+
+</div>
+
     </div>
   );
 };

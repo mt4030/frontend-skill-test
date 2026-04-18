@@ -17,13 +17,13 @@ export default function GameCarousel({gamesList}: gameCarouselProps) {
       opts={{
         align: "start",
       }}
-      className=" mb-10 px-2 md:px-20 lg:px-50 rounded-2xl  "
+      className=" mb-10 px-2 md:px-20 lg:px-20 rounded-2xl bg-gray-900 py-5  "
     >
-    <CarouselContent className="-ml-4">
+    <CarouselContent className="-ml-4 ">
     {gamesList.map((game) => (
       <CarouselItem
         key={game.id}
-        className="
+        className=" 
           pl-4
           basis-1/2
           sm:basis-1/3

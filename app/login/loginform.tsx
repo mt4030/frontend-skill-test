@@ -83,7 +83,7 @@ const LoginForm = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900">
       <div className="bg-gray-800 text-white p-8 rounded-xl shadow-lg w-full max-w-sm">
-        <h1 className="text-2xl font-bold mb-6 text-center">Sign In</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center">Log In</h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <Input
@@ -110,11 +110,11 @@ const LoginForm = () => {
             {loginMutation.isPending ? "Logging in..." : "Sign In"}
           </Button>
         </form>
-        <p className="text-center mt-5">username: <span className=" text-green-700">emilys </span> password: <span className=" text-green-700"> emilyspass </span>  <br />
-        or find more user and password from <span className="text-red-800">https://dummyjson.com/docs</span> 
+        <p className="text-center mt-5">Username: <span className=" text-green-700">emilys</span> | Password: <span className=" text-green-700"> emilyspass </span>  <br />
+        or find more user and password from <a href="https://dummyjson.com/docs" className="text-red-300 hover:text-red-500 ">dummyjson</a> 
         </p>
 
-        {error && <p className="text-red-500 mt-2 text-center">{error}</p>}
+        {error && <p className="text-red-500 mt-4 text-center">something went wrong try again</p>}
       </div>
     </div>
   )

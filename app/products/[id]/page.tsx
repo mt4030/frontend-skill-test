@@ -1,8 +1,8 @@
-"use client"; // MUST be at the top
+"use client"; 
 
 import { use } from "react";
 import { useGames } from "@/providers/context";
-import { Heart, Bookmark, Laptop, Smartphone, Tv } from "lucide-react"; // example icons
+import { Heart, Bookmark, Laptop, Smartphone, Tv } from "lucide-react"; 
 import GameError from "./GameError";
 
 interface ProductPageProps {
@@ -32,8 +32,8 @@ const ProductPage = ({ params }: ProductPageProps) => {
     );
 
   return (
-    <div className="relative bg-gray-900 min-h-screen text-white pb-10">
-     <div className="relative w-full h-[50vh] overflow-hidden">
+    <div className="relative  bg-gray-900 min-h-screen  text-white pb-10">
+     <div className="relative w-full h-[50vh] overflow-hidden  ">
   <img
     src={game.background_image}
     alt={game.name}

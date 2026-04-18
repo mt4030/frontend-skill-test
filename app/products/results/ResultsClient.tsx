@@ -64,7 +64,7 @@ export default function ResultsClient({ searchParams }: Props) {
   }) => setFilters(newValues)
 
   return (
-    <div className="max-w-7xl mx-auto p-4  ">
+    <div className="max-w-7xl mx-auto p-4  min-h-screen ">
       <AdvancedGameFilter
         initialSearch={initialSearch}
         initialGenres={filters.selectedGenres.map(g => g.slug)}

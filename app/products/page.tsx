@@ -38,8 +38,9 @@ const Products = () => {
   if (error) return <div>Error</div>;
 
   return (
-    <section className="p-10 lg:px-50 bg-gray-900 min-h-screen">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-6">
+    <section className="p-10 lg:px-50  bg-gray-900 min-h-screen  pt-20">
+      <h1 className="text-3xl font-bold text-amber-50 capitalize mb-6">All Games</h1>
+      <div className="grid grid-cols-2  mt-20  lg:mt-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-6">
         {currentProducts.map((game: Game) => (
           <GameCard key={game.id} game={game} />
         ))}

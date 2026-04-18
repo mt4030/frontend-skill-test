@@ -10,8 +10,8 @@ import { Avatarprofil } from "../avatar"
 import SiteIcon from "../siteicon"
 import { Button } from "@/components/ui/button"
 import { GameSearch } from "./GameSearch"
+import MobileNavbarBottom from "./mobileNavbar/navBotton"
 const NavBar = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isAvatarOpen, setIsAvatarOpen] = useState(false)
   //for checkng auth for ui
   const { data: user } = useMe()
@@ -32,13 +32,12 @@ const NavBar = () => {
   }
 
   return (
-    <nav className="relative z-50 w-full bg-gray-950 text-amber-50 h-20 px-6 md:px-20 flex items-center">
+    <nav className="lg:relative sticky  z-999 w-full bg-gray-950 text-amber-50 h-20 px-6 md:px-20 flex items-center">
 
-      {/* ===== DESKTOP ===== */}
-      <div className="hidden md:flex w-full items-center">
+      {/*  DESKTOP  */}
+      <div className="hidden   md:flex w-full items-center">
 
-        {/* Left */}
-     <SiteIcon/>
+  <SiteIcon/>
 
 <GameSearch/>
        
@@ -90,49 +89,12 @@ const NavBar = () => {
       </div>
 
       {/* ===== MOBILE ===== */}
-      <div className="md:hidden w-full flex justify-between items-center">
-
-        <img src="/img/icon.png" alt="Website Icon" className="h-12" />
-
-          <Button onClick={() => setIsMobileMenuOpen(prev => !prev)}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="w-8 h-8"
-            >
-              <path d="M2 4.75h16v1.5H2zm0 4.5h16v1.5H2zm0 4.5h16v1.5H2z" />
-            </svg>
-          </Button>
+      <div className=" md:hidden w-full flex justify-around items-center">
+      <img src="/img/icon.png" alt="Website Icon" className="h-12" />
+<div className="px-5 flex justify-center"><GameSearch/></div>
         </div>
-
-    
-
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <ul className="md:hidden absolute top-full left-0 w-full bg-gray-900 flex flex-col gap-4 p-6">
-          {publicLinks.map(link => (
-            <Link
-              key={link.id}
-              href={link.path}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {link.name}
-            </Link>
-          ))}
-
-          {user ? (
-            <>
-              <Link href="/dashboard">Dashboard</Link>
-              <Button className="bg-amber-500" onClick={onLogout}>Logout</Button>
-            </>
-          ) : (
-            <Link href="/login">Login</Link>
-          )}
-             <GameSearch/>
-        </ul>
-      )}
-    </nav>
+   <MobileNavbarBottom loginStat={user}/>
+          </nav>
   )
 }
 
