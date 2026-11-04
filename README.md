@@ -1,254 +1,392 @@
+# Movie & TV Discovery Platform
 
-# 🎮 Game Info Platform
+A modern **Movie & TV Discovery Web Application** built with **Next.js 16, React 19, TypeScript, and the Watchmode API**.
 
-A modern **Game Discovery Web Application** built with **Next.js 14**, **React Query**, and the **RAWG API**.
-It allows users to browse, search, filter, bookmark, and favorite games with authentication and a personalized dashboard.
+The platform allows users to discover movies and TV shows, explore genres, search for titles, apply advanced filters, view title details, and manage their favorite and bookmarked titles.
 
-This project demonstrates real-world frontend architecture including API integration, global state management, caching, authentication flows, pagination, filtering, and UI composition.
-
----
-
-## 🚀 Live Features
-
-* 🔍 Live Search with suggestions from rawg database
-* 🎯 Advanced Filtering (Genres, Platforms, Tags, Items per page) using headlessui
-* 📚 Game Categories by Genre
-* ❤️ Favorites System
-* 🔖 Bookmark System
-* 👤 Authentication (DummyJSON API)
-* 📊 User Dashboard
-* 🧭 Pagination
-* 💾 LocalStorage Caching
-* ⚡ React Query Data Fetching for auth and live search in navbar
-* 🎨 Tailwind UI + Shadcn Components
+The project focuses on practical frontend development concepts, including API integration, server-side API routes, data fetching and caching, state management, URL-based filtering, pagination, and reusable UI components.
 
 ---
 
-## 🛠 Tech Stack
+## Features
 
-* **Framework:** Next.js 14 (App Router)
-* **Language:** TypeScript
-* **State Management:** React Context + React Query
-* **Styling:** Tailwind CSS + Shadcn UI
-* **API:** RAWG Video Games API
-* **Auth API:** DummyJSON Auth
-* **HTTP Client:** Axios / Fetch
-* **Icons:** Lucide React
-* **Notifications:** React Toastify
+- **Movie & TV Discovery** – Browse movies and TV series using Watchmode data.
+- **Live Search** – Search for titles with autocomplete suggestions.
+- **Advanced Search** – Filter titles by search term, genres, and content type.
+- **Genre Categories** – Explore titles by genre.
+- **Title Details** – View detailed information about individual movies and TV shows.
+- **Favorites** – Save favorite titles.
+- **Bookmarks** – Keep a personal list of bookmarked titles.
+- **Authentication** – Login functionality using the DummyJSON authentication API.
+- **User Dashboard** – Access personalized favorites and bookmarks.
+- **Pagination** – Browse titles across multiple pages.
+- **Data Caching** – Use TanStack Query to manage server data and reduce unnecessary requests.
+- **Responsive UI** – Adapt the interface to desktop and mobile screens.
+- **Reusable Components** – Modular components for navigation, search, movie cards, carousels, and UI elements.
 
 ---
 
-## 📁 Project Structure
+## Tech Stack
+
+| Category | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript |
+| UI Library | React 19 |
+| Data Fetching | TanStack React Query |
+| HTTP Client | Axios |
+| Styling | Tailwind CSS 4 |
+| UI Components | shadcn/ui, Radix UI, Headless UI |
+| Icons | Lucide React, Heroicons, React Icons |
+| Carousel | Embla Carousel |
+| Notifications | React Toastify, Sonner |
+| API | Watchmode |
+| Authentication API | DummyJSON |
+
+---
+
+## Project Structure
 
 ```text
 app/
- ├── layout.tsx           # Root layout, providers, navbar, footer
- ├── page.tsx             # Home page
- ├── products/
- │   ├── page.tsx         # Products listing with pagination
- │   ├── results/         # Filtered results page
- │   ├── category/[slug]  # Genre pages
- │   └── [id]/            # Single game page
- ├── dashboard/           # User dashboard
- ├── login/               # Login page
- └── components/
-     ├── heroSection/
-     ├── gameSection/
-     ├── nav/              # can search from api database
-     ├── advSearch/
-     └── ui/
+├── api/
+│   ├── genres/
+│   │   └── route.ts
+│   ├── home/
+│   │   └── route.ts
+│   ├── search/
+│   │   └── route.ts
+│   └── title/
+│       ├── route.ts
+│       └── [id]/
+│           └── route.ts
+│
+├── components/
+│   ├── advSearch/
+│   │   ├── advanceSearch.tsx
+│   │   ├── dropdown.tsx
+│   │   ├── LiveSearchResults.tsx
+│   │   └── SelectedFilters.tsx
+│   │
+│   ├── heroSection/
+│   │   ├── heroCallToAdvSearch.tsx
+│   │   ├── heroCarousel.tsx
+│   │   └── herosection.tsx
+│   │
+│   ├── movieSection/
+│   │   ├── movielist.tsx
+│   │   ├── moviesCard.tsx
+│   │   └── moviesCarousel.tsx
+│   │
+│   ├── nav/
+│   │   ├── mobileNavbar/
+│   │   │   └── navBotton.tsx
+│   │   ├── movieSearch.tsx
+│   │   └── navbar.tsx
+│   │
+│   ├── ui/
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   └── carousel.tsx
+│   │
+│   ├── avatar.tsx
+│   ├── footer.tsx
+│   ├── Loading.tsx
+│   └── siteicon.tsx
+│
+├── api/                         # API route handlers
+├── dashboard/
+│   └── page.tsx
+├── login/
+│   ├── loginform.tsx
+│   └── page.tsx
+├── products/
+│   ├── [id]/
+│   │   ├── movieError.tsx
+│   │   └── page.tsx
+│   ├── category/
+│   │   └── [genre]/
+│   │       └── page.tsx
+│   ├── results/
+│   │   ├── ResultsClient.tsx
+│   │   └── page.tsx
+│   └── page.tsx
+│
+├── global-error.tsx
+├── globals.css
+├── layout.tsx
+└── page.tsx
 
-providers/
- ├── context.tsx          # Global Game Context
- └── query-provider.tsx   # React Query Provider
+components/
+└── ui/                          # Additional shared UI components
 
 hooks/
- └── useMe.ts             # Authentication hook
+├── useMe.ts
+├── use-mobile.ts
+├── usemovieFilters.ts
+└── useMovies.ts
 
 lib/
- └── api-calls.ts         # RAWG API calls
+├── api-calls.ts
+├── persistrdstate.ts
+├── type.ts
+└── utils.ts
+
+providers/
+├── context.tsx
+└── query-provider.tsx
+
+utils/
+├── adv-filters.ts
+└── clsx.ts
+└── watchmode/
+    └── api.ts
+
+public/
+└── img/
+    └── icon.png
+
+README.md
+package.json
+tsconfig.json
+next.config.ts
 ```
 
 ---
 
-## 🧠 Architecture Overview
+## Architecture Overview
 
-The app follows a **clean separation of concerns**:
+The application follows a separation-of-concerns approach.
 
-* **API Layer** → `lib/api-calls.ts`
-* **Global State** → `GameProvider (Context)`
-* **Data Fetching** → React Query
-* **UI Components** → Modular components
-* **Pages** → Next.js App Router
-* **Auth Handling** → `useMe` hook + token storage
-* **Persistence** → LocalStorage caching
+### 1. API Layer
+
+`utils/watchmode/api.ts`
+
+Handles communication with the Watchmode API.
+
+The API key is kept on the server and is not exposed directly to the browser.
+
+### 2. Next.js API Routes
+
+The application uses Next.js Route Handlers as an intermediary between the frontend and Watchmode.
+
+| Endpoint | Purpose |
+|---|---|
+| `/api/home` | Fetch homepage titles |
+| `/api/genres` | Retrieve available genres |
+| `/api/search` | Search for titles |
+| `/api/title` | Retrieve title listings |
+| `/api/title/[id]` | Retrieve individual title details |
+
+### 3. API Calls
+
+`lib/api-calls.ts`
+
+Contains frontend functions for communicating with the application's API routes using Axios.
+
+### 4. Data Fetching and Caching
+
+`hooks/useMovies.ts`
+
+Contains reusable TanStack Query hooks for:
+
+- Homepage titles
+- Movie and TV listings
+- Live search
+- Individual title details
+- Movie genres
+
+TanStack Query handles loading states, error states, caching, and query management.
+
+### 5. Global State
+
+`providers/context.tsx`
+
+Manages shared application state such as favorites and bookmarks.
+
+`providers/query-provider.tsx`
+
+Provides the TanStack Query client to the application.
+
+### 6. UI Components
+
+The `app/components/` directory contains reusable components for navigation, advanced search, movie cards, carousels, and page sections.
 
 ---
 
-## 🌍 Data Flow
+## Data Flow
 
 ```text
-RAWG API → fetchGames() → GameProvider → Components
+                  Watchmode API
+                       |
+                       v
+              utils/watchmode/api.ts
+                       |
+                       v
+              Next.js API Routes
+                       |
+                       v
+                 Axios Requests
+                       |
+                       v
+                TanStack Query
+                       |
+                       v
+                 React Components
+                       |
+                       v
+                    UI
 ```
 
-* Games are fetched once and cached for **6 hours**.
-* Cached games are stored in `localStorage`.
-* Favorites & bookmarks persist locally.
-* React Query manages authentication state.
-* Context provides data across the app.
+The application separates external API communication from frontend components.
+
+This makes the application easier to maintain and allows data fetching logic to be reused across different pages.
 
 ---
 
-## 🔄 Game Context Logic
+## Search and Filtering
 
-`GameProvider` handles:
+The advanced search system supports:
 
-* Fetching games
-* Caching results
-* Loading states
-* Error handling
-* Favorites
-* Bookmarks
-* Redirecting unauthenticated users
+- Search by title
+- Multiple genre selection
+- Movie and TV series filtering
+- Configurable items per page
+- URL-based filter parameters
 
 Example:
 
-```ts
-const { games, favorite, bookmark, handleFavorite, handleBookmark } = useGames();
-```
-
-It ensures consistent state across the entire application.
-
----
-
-## 🔐 Authentication Flow
-
-* Uses **DummyJSON Auth API**
-* On login:
-
-  * Token saved in `localStorage`
-  * React Query cache updated
-* `useMe()` fetches the current user
-* Protected routes redirect unauthenticated users to `/login`
-
----
-
-## 🔎 Advanced Search System
-
-The search system supports:
-
-* Search term
-* Multiple genres
-* Multiple platforms
-* Multiple tags
-* Pagination size
-
-Filters update the URL:
-
 ```text
-/products/results?q=doom&genres=action&platforms=pc&items=10
+/products/results?q=batman&genres=1&type=movie&items=20
 ```
 
-This allows:
-
-* Sharable URLs
-* SEO friendly routing
-* Persistent filters
+Filters are represented in URL query parameters, allowing users to share filtered result pages and preserve search criteria when navigating.
 
 ---
 
-## ❤️ Favorites & 🔖 Bookmarks
+## Homepage and Discovery
 
-* Only logged-in users can favorite/bookmark.
-* Stored in `localStorage`.
-* Displayed in the Dashboard.
-* Toggle logic handled centrally inside `GameProvider`.
+The homepage provides a starting point for discovering movies and TV shows.
 
----
+It includes:
 
-## 📊 Dashboard
+- Hero carousel
+- Search and advanced search access
+- Movie and TV discovery sections
+- Reusable title cards and carousels
 
-The dashboard shows:
-
-* Bookmarked games
-* Favorite games
-* User greeting
-* Logout functionality
-
-It demonstrates protected routing and personalized UI.
+The homepage uses a curated initial collection of popular titles rather than loading the entire Watchmode catalogue.
 
 ---
 
-## 🎨 UI & UX
+## Authentication and User Dashboard
 
-* Fully responsive layout
-* Carousel sliders
-* Hover animations
-* Live search suggestions
-* Dark themed gaming aesthetic
+The application includes a login flow using DummyJSON authentication.
+
+The dashboard provides access to user-related functionality, including favorites and bookmarks.
+
+Favorites and bookmarks are managed through the application's shared state and persistence utilities.
+
+Note: Authentication and user data are currently based on external demo authentication and frontend state, not a production-grade backend authentication system.
 
 ---
 
-## ⚙️ Environment Setup
+## Environment Variables
 
-Create a `.env.local` file:
+Create a `.env.local` file in the project root:
 
 ```env
-NEXT_PUBLIC_RAWG_API_KEY=your_rawg_api_key_here
+WATCHMODE_API_KEY=your_watchmode_api_key
 ```
 
-Then run:
+Get an API key from:
+
+https://api.watchmode.com/
+
+**Important:** Keep your API key server-side. Do not prefix it with `NEXT_PUBLIC_` or expose it in client-side code.
+
+Never commit `.env.local` to GitHub.
+
+---
+
+## Installation and Setup
+
+Clone the repository:
+
+```bash
+git clone YOUR_REPOSITORY_URL
+```
+
+Navigate to the project:
+
+```bash
+cd YOUR_PROJECT_FOLDER
+```
+
+Install dependencies:
 
 ```bash
 npm install
+```
+
+Create `.env.local` and configure your Watchmode API key.
+
+Start the development server:
+
+```bash
 npm run dev
 ```
 
----
-
-## 🧪 Demo Login
-
-You can use:
+Open:
 
 ```text
-username: emilys
-password: emilyspass
+http://localhost:3000
 ```
 
-Or explore more users from:
-[https://dummyjson.com/docs](https://dummyjson.com/docs)
+---
+
+## Available Scripts
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start development server |
+| `npm run build` | Build the production application |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
 
 ---
 
-## 🏆 What This Project Demonstrates
+## Future Improvements
 
-✅ Real-world frontend architecture
-✅ API integration
-✅ Authentication handling
-✅ State management
-✅ Performance caching
-✅ URL-driven filtering
-✅ Modular components
-✅ Clean UI composition
-✅ Production-ready patterns
-
----
-
-## 📌 Future Improvements
-
-* Backend persistence
-* Server-side authentication
-* Infinite scroll
-* User profiles
-* Reviews system
-* Multiplayer filtering
+- More advanced filtering options
+- Improved search across larger title collections
+- Better pagination and discovery experience
+- Production-ready authentication
+- Backend persistence for favorites and bookmarks
+- User profiles
+- Reviews and ratings
+- Automated testing
+- Performance and accessibility improvements
 
 ---
 
-## 👨‍💻 Author
+## What This Project Demonstrates
 
-Built by **mohsen tebi**
-Frontend Developer | React | Next.js
+- Next.js App Router architecture
+- TypeScript in a React application
+- REST API integration
+- Server-side API key management
+- TanStack Query and server-state caching
+- Global state management with React Context
+- URL-driven search and filtering
+- Reusable component architecture
+- Responsive UI development
+- Authentication flow integration
 
 ---
 
+## Author
+
+**Mohsen Tebi**
+
+Frontend Developer | React | Next.js | TypeScript
