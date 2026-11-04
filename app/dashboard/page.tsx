@@ -1,115 +1,227 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import GameCard from "../components/gameSection/gamesCard";
-import { useMe } from "@/hooks/useMe";
-import { useGames } from "@/providers/context";
-import Loading from "../components/Loading";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useQueries, useQueryClient } from '@tanstack/react-query';
+
+import MovieCard from '../components/movieSection/moviesCard';
+import Loading from '../components/Loading';
+
+import { useMe } from '@/hooks/useMe';
+import { useMoviesContext } from '@/providers/context';
+import { fetchMovieDetails } from '@/lib/api-calls';
+
+import type { Movie } from '@/lib/type';
 
 export default function Dashboard() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  const { data: user, isLoading } = useMe();
-  const { games, favorite, bookmark, handleFavorite, handleBookmark } = useGames();
+  const { data: user, isLoading: isUserLoading } = useMe();
 
-  // Redirect if not logged in
+  const {
+    favorite,
+    bookmark,
+    handleFavorite,
+    handleBookmark,
+  } = useMoviesContext();
+
+  // Redirect unauthenticated users to login
   useEffect(() => {
-    if (!isLoading && !user) {
-      router.replace("/login");
+    if (!isUserLoading && !user) {
+      router.replace('/login');
     }
-  }, [isLoading, user, router]);
+  }, [isUserLoading, user, router]);
 
+  // Fetch bookmarked titles
+  const bookmarkedQueries = useQueries({
+    queries: bookmark.map((id) => ({
+      queryKey: ['movie', id],
+      queryFn: () => fetchMovieDetails(id),
+      enabled: Boolean(user),
+    })),
+  });
 
-  if (isLoading || !user) return <Loading/> 
+  // Fetch favorite titles
+  const favoriteQueries = useQueries({
+    queries: favorite.map((id) => ({
+      queryKey: ['movie', id],
+      queryFn: () => fetchMovieDetails(id),
+      enabled: Boolean(user),
+    })),
+  });
 
+  // Extract successfully loaded movies
+  const bookmarkedMovies = bookmarkedQueries
+    .map((query) => query.data)
+    .filter((movie): movie is Movie => movie !== undefined);
 
-  const bookmarkedGames = games.filter((g) => bookmark.includes(g.id));
-  const favoriteGames = games.filter((g) => favorite.includes(g.id));
+  const favoriteMovies = favoriteQueries
+    .map((query) => query.data)
+    .filter((movie): movie is Movie => movie !== undefined);
+
+  // Loading states
+  const isBookmarksLoading = bookmarkedQueries.some(
+    (query) => query.isPending
+  );
+
+  const isFavoritesLoading = favoriteQueries.some(
+    (query) => query.isPending
+  );
+
+  // Logout
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+
+    queryClient.setQueryData(['me'], null);
+
+    router.replace('/');
+  };
+
+  // Authentication loading or redirect
+  if (isUserLoading || !user) {
+    return <Loading />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col md:flex-row">
+
       {/* Sidebar */}
       <aside className="w-full md:w-60 bg-gray-950 p-6 shrink-0 flex flex-col justify-between md:pb-25">
+
         <div>
-         <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
-        <p className="mb-2">Welcome, {user.firstName || "Gamer"}!</p>
-      
+          <h2 className="text-2xl font-bold mb-6">
+            Dashboard
+          </h2>
+
+          <p className="mb-2">
+            Welcome, {user.firstName || 'Movie Lover'}!
+          </p>
         </div>
-        
-        <div className="">
+
+        <div>
           <button
-          onClick={() => router.push("/")}
-          className="mb-4 w-full px-4 py-2 bg-amber-500 text-black rounded hover:bg-amber-400"
-        >
-          Home
-        </button>
-        <button
-          onClick={() => {
-            localStorage.removeItem("token");
-            router.push("/");
-          }}
-          className="w-full px-4 py-2 bg-red-600 text-black rounded hover:bg-red-500"
-        >
-          Logout
-        </button>
+            onClick={() => router.push('/')}
+            className="mb-4 w-full px-4 py-2 bg-amber-500 text-black rounded hover:bg-amber-400"
+          >
+            Home
+          </button>
+
+          <button
+            onClick={handleLogout}
+            className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-500"
+          >
+            Logout
+          </button>
         </div>
-        
+
       </aside>
 
       {/* Main Content */}
       <main className="flex-1 p-6 space-y-10">
-        {/* Bookmarks */}
+
+        {/* Watchlist */}
         <section>
+
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold">Bookmarked Games</h3>
+
+            <h3 className="text-xl font-bold">
+              Watchlist
+            </h3>
+
             <span className="text-gray-400 text-sm">
-              {bookmarkedGames.length} {bookmarkedGames.length === 1 ? "game" : "games"}
+              {bookmark.length}{' '}
+              {bookmark.length === 1 ? 'title' : 'titles'}
             </span>
+
           </div>
-          {bookmarkedGames.length === 0 ? (
-            <p className="text-gray-400">You haven't bookmarked any games yet.</p>
+
+          {bookmark.length === 0 ? (
+            <p className="text-gray-400">
+              You haven't added any titles to your watchlist yet.
+            </p>
+          ) : isBookmarksLoading && bookmarkedMovies.length === 0 ? (
+            <Loading />
+          ) : bookmarkedMovies.length === 0 ? (
+            <p className="text-gray-400">
+              Unable to load your watchlist.
+            </p>
           ) : (
-            <div className="flex space-x-4 overflow-x-auto py-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900 max-w-120">
-              {bookmarkedGames.map((game) => (
-                <GameCard
-                  key={game.id}
-                  game={game}
-                  isFavorite={favorite.includes(game.id)}
-                  isBookmarked={true}
-                  onFavorite={() => handleFavorite(game.id)}
-                  onBookmark={() => handleBookmark(game.id)}
-                />
+
+            <div className="flex space-x-4 overflow-x-auto py-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
+
+              {bookmarkedMovies.map((movie) => (
+                <div
+                  key={movie.id}
+                  className="w-40 shrink-0 md:w-48"
+                >
+                  <MovieCard
+                    movie={movie}
+                    isFavorite={favorite.includes(movie.id)}
+                    isBookmarked={true}
+                    onFavorite={() => handleFavorite(movie.id)}
+                    onBookmark={() => handleBookmark(movie.id)}
+                  />
+                </div>
               ))}
+
             </div>
+
           )}
+
         </section>
 
         {/* Favorites */}
         <section>
+
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold">Favorite Games</h3>
+
+            <h3 className="text-xl font-bold">
+              Favorite Movies
+            </h3>
+
             <span className="text-gray-400 text-sm">
-              {favoriteGames.length} {favoriteGames.length === 1 ? "game" : "games"}
+              {favorite.length}{' '}
+              {favorite.length === 1 ? 'title' : 'titles'}
             </span>
+
           </div>
-          {favoriteGames.length === 0 ? (
-            <p className="text-gray-400">You haven't marked any favorites yet.</p>
+
+          {favorite.length === 0 ? (
+            <p className="text-gray-400">
+              You haven't marked any titles as favorites yet.
+            </p>
+          ) : isFavoritesLoading && favoriteMovies.length === 0 ? (
+            <Loading />
+          ) : favoriteMovies.length === 0 ? (
+            <p className="text-gray-400">
+              Unable to load your favorite titles.
+            </p>
           ) : (
-            <div className="flex space-x-4 overflow-x-auto py-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900 max-w-120">
-              {favoriteGames.map((game) => (
-                <GameCard
-                  key={game.id}
-                  game={game}
-                  isFavorite={true}
-                  isBookmarked={bookmark.includes(game.id)}
-                  onFavorite={() => handleFavorite(game.id)}
-                  onBookmark={() => handleBookmark(game.id)}
-                />
+
+            <div className="flex space-x-4 overflow-x-auto py-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
+
+              {favoriteMovies.map((movie) => (
+                <div
+                  key={movie.id}
+                  className="w-40 shrink-0 md:w-48"
+                >
+                  <MovieCard
+                    movie={movie}
+                    isFavorite={true}
+                    isBookmarked={bookmark.includes(movie.id)}
+                    onFavorite={() => handleFavorite(movie.id)}
+                    onBookmark={() => handleBookmark(movie.id)}
+                  />
+                </div>
               ))}
+
             </div>
+
           )}
+
         </section>
+
       </main>
     </div>
   );

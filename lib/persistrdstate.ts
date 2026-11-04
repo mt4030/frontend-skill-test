@@ -1,34 +1,53 @@
-'use client'
-import { useState, useEffect } from "react"
+'use client';
+
+import {
+  useEffect,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from 'react';
 
 export function usePersistedState<T>(
   key: string,
   defaultValue: T
-): [T, React.Dispatch<React.SetStateAction<T>>] {
+): [T, Dispatch<SetStateAction<T>>] {
+  const [state, setState] = useState<T>(defaultValue);
 
-  const isClient = typeof window !== "undefined"
+  const [hydratedKey, setHydratedKey] = useState<string | null>(null);
 
-  const [state, setState] = useState<T>(() => {
-    if (!isClient) return defaultValue // SSR guard
-
-    try {
-      const stored = localStorage.getItem(key)
-      if (!stored || stored === "undefined") return defaultValue
-      return JSON.parse(stored) as T
-    } catch (err) {
-      console.warn(`Failed to parse localStorage key "${key}"`, err)
-      return defaultValue
-    }
-  })
-
+  // Load persisted state after the component mounts
   useEffect(() => {
-    if (!isClient) return
     try {
-      localStorage.setItem(key, JSON.stringify(state))
-    } catch (err) {
-      console.warn(`Failed to save localStorage key "${key}"`, err)
-    }
-  }, [key, state, isClient])
+      const stored = localStorage.getItem(key);
 
-  return [state, setState]
+      if (stored && stored !== 'undefined') {
+        setState(JSON.parse(stored) as T);
+      }
+    } catch (error) {
+      console.warn(
+        `Failed to read localStorage key "${key}"`,
+        error
+      );
+    } finally {
+      setHydratedKey(key);
+    }
+  }, [key]);
+
+  // Save only after the current key has been loaded
+  useEffect(() => {
+    if (hydratedKey !== key) {
+      return;
+    }
+
+    try {
+      localStorage.setItem(key, JSON.stringify(state));
+    } catch (error) {
+      console.warn(
+        `Failed to save localStorage key "${key}"`,
+        error
+      );
+    }
+  }, [key, state, hydratedKey]);
+
+  return [state, setState];
 }

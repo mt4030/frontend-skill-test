@@ -1,36 +1,58 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useGames } from "@/providers/context";
-import HeroSection from "./components/heroSection/herosection";
-import GameList from "./components/gameSection/gamelist";
-import Loading from "./components/Loading";
-
+import { useHomeMovies } from '@/hooks/useMovies';
+import HeroSection from './components/heroSection/herosection';
+import MovieList from './components/movieSection/movielist';
+import Loading from './components/Loading';
 
 export default function Home() {
-  const { games, isLoading, error } = useGames();
-  const [isDataReady, setIsDataReady] = useState<boolean>(false);
-  // Simulating data fetch state
-  useEffect(() => {
-    if (!isLoading && games.length > 0) {
-      setIsDataReady(true);
-    }
-  }, [games, isLoading]);
+  const {
+    data: movies = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useHomeMovies();
 
-  // Show loading state if still fetching
-  if (!isDataReady) {
+  if (isLoading) {
     return <Loading />;
   }
 
-  // Handle errors
-  if (error) {
-    return <div>Error: {error}</div>;
+  if (isError) {
+    return (
+      <main className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center gap-4">
+        <p>
+          {error instanceof Error
+            ? error.message
+            : 'Failed to load movies.'}
+        </p>
+
+        <button
+          onClick={() => refetch()}
+          className="rounded-lg bg-amber-500 px-5 py-2 text-black"
+        >
+          Try again
+        </button>
+      </main>
+    );
+  }
+
+  if (movies.length === 0) {
+    return (
+      <main className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+        No titles found.
+      </main>
+    );
   }
 
   return (
     <main className="flex flex-col">
-      <HeroSection gamesList={games} />
-      <GameList gamesList={games} />
+      <section className="relative left-1/2 w-screen -translate-x-1/2">
+      
+      <HeroSection moviesList={movies} />
+      </section>
+
+      <MovieList moviesList={movies} />
     </main>
   );
 }

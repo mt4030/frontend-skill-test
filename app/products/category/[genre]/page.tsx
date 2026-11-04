@@ -1,81 +1,195 @@
-'use client'
 
-import { useEffect, useState } from "react";
-import { use } from 'react';
-import { useGames } from '@/providers/context';
-import GameCard from '@/app/components/gameSection/gamesCard'; // Assuming GameCard is your individual game card component
+'use client';
+
+import { use, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+
+import MovieCard from '@/app/components/movieSection/moviesCard';
+import Loading from '@/app/components/Loading';
+
+import { useMovieGenres } from '@/hooks/useMovies';
+import { fetchMovies } from '@/lib/api-calls';
+
+const ITEMS_PER_PAGE = 15;
 
 interface PageProps {
   params: Promise<{ genre: string }>;
 }
 
-const GenrePage = ({ params }: PageProps) => {
-  const { games } = useGames();
-  const { genre } = use(params);
-  
-  // Filter games based on the selected genre
-  const genreGames = games.filter(game =>
-    game.genres?.some((g: any) => g.slug === genre)
-  );
+export default function GenrePage({ params }: PageProps) {
+  const { genre: genreSlug } = use(params);
 
-  // Pagination Logic
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15; // Show 15 items per page
-  const totalPages = Math.ceil(genreGames.length / itemsPerPage);
 
-  // Slice products for the current page
-  const currentProducts = genreGames.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+  // Fetch Watchmode genres
+  const {
+    data: genres = [],
+    isLoading: isGenresLoading,
+    isError: isGenresError,
+  } = useMovieGenres();
+
+  // Find the selected genre using its slug
+  const selectedGenre = genres.find(
+    (item) => item.slug === genreSlug
   );
 
-  // Scroll to top on page change
+  // Fetch titles belonging to that genre
+  const {
+    data,
+    isLoading: isMoviesLoading,
+    isError: isMoviesError,
+  } = useQuery({
+    queryKey: [
+      'genre-movies',
+      selectedGenre?.id,
+      currentPage,
+    ],
+
+    queryFn: () =>
+      fetchMovies({
+        limit: ITEMS_PER_PAGE,
+        page: currentPage,
+        types: 'movie,tv_series',
+        genres: String(selectedGenre!.id),
+      }),
+
+    enabled: selectedGenre !== undefined,
+
+    staleTime: 30 * 60 * 1000,
+  });
+
+  const movies = data?.titles ?? [];
+
+  // Reset pagination when the genre changes
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setCurrentPage(1);
+  }, [genreSlug]);
+
+  // Scroll to top after changing pages
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
   }, [currentPage]);
 
-  // Pagination functions
+  const totalResults = data?.total_results;
+
+  const totalPages =
+    totalResults !== undefined
+      ? Math.max(1, Math.ceil(totalResults / ITEMS_PER_PAGE))
+      : undefined;
+
+  const hasNextPage =
+    totalPages !== undefined
+      ? currentPage < totalPages
+      : movies.length === ITEMS_PER_PAGE;
+
   const goPrev = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
+    setCurrentPage((previous) => Math.max(1, previous - 1));
   };
 
   const goNext = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+    if (hasNextPage) {
+      setCurrentPage((previous) => previous + 1);
+    }
   };
 
+  // Genre loading
+  if (isGenresLoading) {
+    return <Loading />;
+  }
+
+  if (isGenresError) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-900 text-red-400">
+        Failed to load genres.
+      </div>
+    );
+  }
+
+  // Invalid genre
+  if (!selectedGenre) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-900 text-white">
+        Genre not found.
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col min-h-screen p-10 lg:px-50  bg-gray-900  px-10 pb-15 pt-20">
-      <h1 className="text-3xl font-bold text-amber-50 capitalize mb-6">
-        {genre.replace('-', ' ')}
-      </h1>
+    <main className="flex min-h-screen flex-col bg-gray-900 px-6 pb-20 pt-16 text-white md:px-12 lg:px-24">
 
-      {/* Grid Layout for the current page's games */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        {currentProducts.map((game: any) => (
-          <GameCard key={game.id} game={game} />
-        ))}
+      <div className="mb-8">
+
+        <h1 className="mb-2 text-3xl font-bold capitalize text-amber-50 md:text-4xl">
+          {selectedGenre.name}
+        </h1>
+
+        <p className="text-sm text-gray-400">
+          Movies and TV shows in the {selectedGenre.name} genre
+        </p>
+
       </div>
 
-      {/* Pagination controls */}
-      <div className="flex justify-center items-center gap-2 mt-20">
-        <button
-          className="px-3 py-1 bg-gray-700 cursor-pointer text-white rounded hover:bg-gray-600"
-          onClick={goPrev}
-          disabled={currentPage === 1}
-        >
-          Prev
-        </button>
+      {/* Loading */}
+      {isMoviesLoading && <Loading />}
 
-        <button
-          className="px-3 py-1 bg-gray-700 cursor-pointer text-white rounded hover:bg-gray-600"
-          onClick={goNext}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-      </div>
-    </div>
+      {/* Error */}
+      {isMoviesError && (
+        <p className="text-center text-red-400">
+          Failed to load titles. Please try again.
+        </p>
+      )}
+
+      {/* Results */}
+      {!isMoviesLoading && !isMoviesError && (
+        <>
+          {movies.length === 0 ? (
+            <p className="py-16 text-center text-gray-400">
+              No titles found in this genre.
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+              {movies.map((movie) => (
+                <MovieCard
+                  key={movie.id}
+                  movie={movie}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          <div className="mt-16 flex items-center justify-center gap-4">
+
+            <button
+              type="button"
+              onClick={goPrev}
+              disabled={currentPage === 1 || isMoviesLoading}
+              className="rounded bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Previous
+            </button>
+
+            <span className="text-sm text-gray-300">
+              Page {currentPage}
+              {totalPages !== undefined && ` of ${totalPages}`}
+            </span>
+
+            <button
+              type="button"
+              onClick={goNext}
+              disabled={!hasNextPage || isMoviesLoading}
+              className="rounded bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Next
+            </button>
+
+          </div>
+        </>
+      )}
+
+    </main>
   );
-};
-
-export default GenrePage;
+}

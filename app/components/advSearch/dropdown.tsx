@@ -1,19 +1,30 @@
-'use client'
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react'
-import { CheckIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
-import { useState } from 'react'
-import clsx from 'clsx'
 
-type DropdownItem = { id?: string | number; name: string }
+'use client';
+
+import {
+  Listbox,
+  ListboxButton,
+  ListboxOption,
+  ListboxOptions,
+} from '@headlessui/react';
+
+import { CheckIcon, ChevronDownIcon } from '@heroicons/react/20/solid';
+import { useState } from 'react';
+import clsx from 'clsx';
+
+type DropdownItem = {
+  id?: string | number;
+  name: string;
+};
 
 type DropdownProps<T extends DropdownItem> = {
-  data: T[]
-  value: T | T[] | null
-  onChange: (value: T | T[]) => void
-  multiple?: boolean
-  label?: string
-  placeholder?: string
-}
+  data: T[];
+  value: T | T[] | null;
+  onChange: (value: T | T[]) => void;
+  multiple?: boolean;
+  label?: string;
+  placeholder?: string;
+};
 
 export default function Dropdown<T extends DropdownItem>({
   data,
@@ -23,45 +34,92 @@ export default function Dropdown<T extends DropdownItem>({
   label,
   placeholder = 'Select...',
 }: DropdownProps<T>) {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [isSelectAll, setIsSelectAll] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('');
 
   const displayValue = () => {
     if (multiple) {
-      if (!Array.isArray(value) || value.length === 0) return placeholder
-      return value.map(v => v.name).join(', ')
+      if (!Array.isArray(value) || value.length === 0) {
+        return placeholder;
+      }
+
+      return value.map((v) => v.name).join(', ');
     }
-    return (value as T | null)?.name ?? placeholder
-  }
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-  }
+    return (value as T | null)?.name ?? placeholder;
+  };
 
-  const filteredData = data.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredData = data.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const selectedItems = Array.isArray(value) ? value : [];
+
+  const isSelectAll =
+    multiple &&
+    filteredData.length > 0 &&
+    filteredData.every((item) =>
+      selectedItems.some((selected) =>
+        selected.id != null && item.id != null
+          ? selected.id === item.id
+          : selected.name === item.name
+      )
+    );
 
   const handleSelectAll = () => {
+    if (!multiple) return;
+
     if (isSelectAll) {
-      onChange([]) // Deselect all
+      const remainingItems = selectedItems.filter(
+        (selected) =>
+          !filteredData.some((item) =>
+            selected.id != null && item.id != null
+              ? selected.id === item.id
+              : selected.name === item.name
+          )
+      );
+
+      onChange(remainingItems);
     } else {
-      onChange(data) // Select all
+      const updatedItems = [...selectedItems];
+
+      filteredData.forEach((item) => {
+        const alreadySelected = updatedItems.some((selected) =>
+          selected.id != null && item.id != null
+            ? selected.id === item.id
+            : selected.name === item.name
+        );
+
+        if (!alreadySelected) {
+          updatedItems.push(item);
+        }
+      });
+
+      onChange(updatedItems);
     }
-    setIsSelectAll(!isSelectAll)
-  }
+  };
 
   return (
-    <div className="w-full ">
-      {label && <label className="mb-2 block text-sm bg-gray-90 text-gray-300">{label}</label>}
-      
-      <Listbox value={value ?? undefined} onChange={onChange} multiple={multiple}>
+    <div className="w-full">
+      {label && (
+        <label className="mb-2 block text-sm bg-gray-90 text-gray-300">
+          {label}
+        </label>
+      )}
+
+      <Listbox
+        value={value ?? undefined}
+        onChange={onChange}
+        multiple={multiple}
+      >
         <div className="relative">
           <ListboxButton className="relative w-full rounded-lg bg-gray-800 py-2 pr-8 pl-3 text-left text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
             <span className="block truncate">{displayValue()}</span>
+
             <ChevronDownIcon className="pointer-events-none absolute top-2.5 right-2.5 h-5 w-5 text-white/60" />
           </ListboxButton>
 
           <ListboxOptions className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-gray-900 border border-gray-700 p-1 focus:outline-none">
-            
+
             {/* Search Input */}
             <div className="px-3 py-2">
               <input
@@ -69,13 +127,13 @@ export default function Dropdown<T extends DropdownItem>({
                 className="w-full bg-gray-800 text-white rounded-md px-3 py-2 text-sm"
                 placeholder="Search..."
                 value={searchTerm}
-                onChange={handleSearchChange}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
 
-            {/* Select All / Deselect All Button - Only if it's a multiple selection dropdown */}
+            {/* Select All / Deselect All */}
             {multiple && (
-              <div 
+              <div
                 className="px-3 py-2 cursor-pointer text-sm text-gray-400 hover:bg-gray-700"
                 onClick={handleSelectAll}
               >
@@ -83,7 +141,7 @@ export default function Dropdown<T extends DropdownItem>({
               </div>
             )}
 
-            {/* List of options */}
+            {/* Options */}
             {filteredData.map((item) => (
               <ListboxOption
                 key={item.id ?? item.name}
@@ -104,5 +162,5 @@ export default function Dropdown<T extends DropdownItem>({
         </div>
       </Listbox>
     </div>
-  )
+  );
 }

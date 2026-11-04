@@ -1,123 +1,265 @@
-"use client"; 
 
-import { use } from "react";
-import { useGames } from "@/providers/context";
-import { Heart, Bookmark, Laptop, Smartphone, Tv } from "lucide-react"; 
-import GameError from "./GameError";
+'use client';
+
+import { use } from 'react';
+
+import {
+  Heart,
+  Bookmark,
+  Clock,
+  Film,
+  Tv,
+  CalendarDays,
+} from 'lucide-react';
+
+import { useMovieDetails } from '@/hooks/useMovies';
+import { useMoviesContext } from '@/providers/context';
+
+import MovieError from './movieError';
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;
 }
 
-const platformIcon = (name: string) => {
-  const lower = name.toLowerCase();
-  if (lower.includes("pc")) return <Laptop className="w-4 h-4" />;
-  if (lower.includes("playstation") || lower.includes("ps")) return <Tv className="w-4 h-4" />;
-  if (lower.includes("xbox")) return <Tv className="w-4 h-4" />;
-  if (lower.includes("switch") || lower.includes("mobile")) return <Smartphone className="w-4 h-4" />;
-  return <Laptop className="w-4 h-4" />; 
-};
-
-const ProductPage = ({ params }: ProductPageProps) => {
+export default function ProductPage({ params }: ProductPageProps) {
   const { id } = use(params);
-  const { games, handleBookmark, handleFavorite, favorite, bookmark } = useGames();
-  const gameId = Number(id);
-  const game = games.find(g => g.id === gameId);
-  const isFavorited = favorite.includes(gameId);
-  const isBookmarked = bookmark.includes(gameId);
 
-  if (!game)
+  const movieId = Number(id);
+
+  const isValidId =
+    Number.isSafeInteger(movieId) && movieId > 0;
+
+  // Fetch movie details through TanStack Query
+  const {
+    data: movie,
+    isLoading,
+    isError,
+  } = useMovieDetails(isValidId ? movieId : undefined);
+
+  // Favorites and watchlist only
+  const {
+    handleBookmark,
+    handleFavorite,
+    favorite,
+    bookmark,
+  } = useMoviesContext();
+
+  if (!isValidId) {
+    return <MovieError />;
+  }
+
+  if (isLoading) {
     return (
-     <GameError/>
+      <div className="flex min-h-screen items-center justify-center bg-gray-900 text-white">
+        Loading movie details...
+      </div>
     );
+  }
+
+  if (isError || !movie) {
+    return <MovieError />;
+  }
+
+  const isFavorited = favorite.includes(movie.id);
+  const isBookmarked = bookmark.includes(movie.id);
+
+  const backdrop = movie.backdrop || movie.poster;
+  const poster = movie.poster || movie.backdrop;
+
+  const isTvShow = movie.type.startsWith('tv_');
 
   return (
-    <div className="relative  bg-gray-900 min-h-screen  text-white pb-10">
-     <div className="relative w-full h-[50vh] overflow-hidden  ">
-  <img
-    src={game.background_image}
-    alt={game.name}
-    className="w-full h-full object-cover"
-  />
-</div>
+    <main className="relative min-h-screen overflow-hidden bg-gray-900 pb-16 text-white">
 
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-linear-to-t from-black via-black/90 to-transparent" />
-        <div className="absolute bottom-0 h-[40%] w-full bg-linear-to-t from-black to-transparent" />
+      {/* Backdrop */}
+      <div className="relative h-[50vh] w-full overflow-hidden bg-gray-950">
+        {backdrop && (
+          <img
+            src={backdrop}
+            alt={movie.title}
+            className="h-full w-full object-cover"
+          />
+        )}
+
+        <div className="absolute inset-0 bg-linear-to-t from-gray-900 via-black/60 to-black/20" />
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 md:-mt-60 -mt-93">
-        <div className="flex flex-col md:flex-row gap-10">
-          <img
-            src={game.background_image}
-            alt={game.name}
-            className="w-full md:w-105 h-auto rounded-xl shadow-2xl"
-          />
+      {/* Movie information */}
+      <div className="relative z-10 mx-auto -mt-32 max-w-6xl px-4 md:-mt-60">
 
-          <div className="flex flex-col gap-4 flex-1">
-            <h1 className="text-3xl md:text-4xl font-bold">{game.name}</h1>
+        <div className="flex flex-col gap-8 md:flex-row md:gap-10">
 
-            <div className="text-gray-300 leading-relaxed mt-2">
-              Released: {game.released} | ESRB: {game.esrb_rating?.name || "N/A"}
+          {/* Poster */}
+          <div className="w-full shrink-0 md:w-80 lg:w-96">
+
+            {poster ? (
+              <img
+                src={poster}
+                alt={movie.title}
+                className="mx-auto max-h-[550px] w-full rounded-xl object-cover shadow-2xl"
+              />
+            ) : (
+              <div className="flex h-96 items-center justify-center rounded-xl bg-gray-800 text-center text-gray-400">
+                {movie.title}
+              </div>
+            )}
+
+          </div>
+
+          {/* Details */}
+          <div className="flex flex-1 flex-col gap-5">
+
+            <div>
+              <h1 className="text-3xl font-bold md:text-4xl lg:text-5xl">
+                {movie.title}
+              </h1>
+
+              {movie.original_title &&
+                movie.original_title !== movie.title && (
+                  <p className="mt-2 text-sm text-gray-400">
+                    Original title: {movie.original_title}
+                  </p>
+                )}
             </div>
 
-            <div className="flex flex-wrap gap-6 text-sm text-gray-400 mt-2">
-              <span>⭐ {game.rating}</span>
-              <span>Playtime: {game.playtime || 0} hrs</span>
+            {/* Release information */}
+            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-300">
+
+              <span className="flex items-center gap-2">
+                <CalendarDays size={17} />
+
+                {movie.release_date || movie.year || 'Release date unavailable'}
+              </span>
+
+              <span className="rounded bg-gray-800 px-3 py-1">
+                Age rating: {movie.us_rating || 'N/A'}
+              </span>
+
             </div>
 
-            {/* Platforms with icons */}
-            <div className="flex flex-wrap gap-3 mt-4">
-              {game.platforms?.map(p => (
-                <span
-                  key={p.platform.id}
-                  className="flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-full bg-gray-800/50 text-amber-400"
-                >
-                  {platformIcon(p.platform.name)}
-                  {p.platform.name}
+            {/* Ratings and type */}
+            <div className="flex flex-wrap gap-6 text-sm text-gray-300">
+
+              {movie.user_rating != null && (
+                <span className="font-semibold text-amber-400">
+                  ★ {movie.user_rating.toFixed(1)}/10
                 </span>
-              ))}
-            </div>
+              )}
 
-            {/* Genres badges */}
-            <div className="flex flex-wrap gap-2 mt-4">
-              {game.genres?.map((g) => (
-                <span
-                  key={g.id}
-                  className="px-3 py-1 text-xs font-semibold rounded-full bg-amber-500/20 text-amber-400 hover:bg-amber-500 hover:text-black transition"
-                >
-                  {g.name}
+              {movie.critic_score != null && (
+                <span>
+                  Critic score: {movie.critic_score}/100
                 </span>
-              ))}
+              )}
+
+              {movie.runtime_minutes != null && (
+                <span className="flex items-center gap-2">
+                  <Clock size={17} />
+                  {movie.runtime_minutes} min
+                </span>
+              )}
+
+              <span className="flex items-center gap-2">
+                {isTvShow ? <Tv size={17} /> : <Film size={17} />}
+
+                {isTvShow ? 'TV Show' : 'Movie'}
+              </span>
+
+              {movie.end_year != null && (
+                <span>
+                  {movie.year}–{movie.end_year}
+                </span>
+              )}
+
             </div>
 
-            <div className="flex flex-wrap gap-4 mt-4">
+            {/* Genres */}
+            {movie.genre_names && movie.genre_names.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+
+                {movie.genre_names.map((genre) => (
+                  <span
+                    key={genre}
+                    className="rounded-full bg-amber-500/20 px-3 py-1 text-xs font-semibold text-amber-400 transition hover:bg-amber-500 hover:text-black"
+                  >
+                    {genre}
+                  </span>
+                ))}
+
+              </div>
+            )}
+
+            {/* Plot */}
+            <div className="mt-2">
+
+              <h2 className="mb-3 text-xl font-bold">
+                Overview
+              </h2>
+
+              <p className="leading-relaxed text-gray-300">
+                {movie.plot_overview ||
+                  'No plot overview is available for this title.'}
+              </p>
+
+            </div>
+
+            {/* Review summary */}
+            {movie.review_summary && (
+              <div>
+                <h2 className="mb-2 text-xl font-bold">
+                  Review Summary
+                </h2>
+
+                <p className="leading-relaxed text-gray-300">
+                  {movie.review_summary}
+                </p>
+              </div>
+            )}
+
+            {/* Favorite and watchlist */}
+            <div className="mt-4 flex flex-wrap gap-4">
+
               <button
-                onClick={() => handleFavorite(game.id)}
-                className={`inline-flex items-center gap-2 border px-6 py-2 rounded transition
-                  ${isFavorited ? "bg-red-600 border-red-600" : "border-gray-500 hover:bg-gray-800"}
-                `}
+                type="button"
+                onClick={() => handleFavorite(movie.id)}
+                aria-pressed={isFavorited}
+                className={`inline-flex items-center gap-2 rounded border px-6 py-2 transition ${
+                  isFavorited
+                    ? 'border-red-600 bg-red-600 text-white'
+                    : 'border-gray-500 hover:bg-gray-800'
+                }`}
               >
-                <Heart size={18} fill={isFavorited ? "white" : "none"} />
-                Favorite
+                <Heart
+                  size={18}
+                  fill={isFavorited ? 'currentColor' : 'none'}
+                />
+
+                {isFavorited ? 'Favorited' : 'Favorite'}
               </button>
 
               <button
-                onClick={() => handleBookmark(game.id)}
-                className={`inline-flex items-center gap-2 border px-6 py-2 rounded transition
-                  ${isBookmarked ? "bg-blue-600 border-blue-600" : "border-gray-500 hover:bg-gray-800"}
-                `}
+                type="button"
+                onClick={() => handleBookmark(movie.id)}
+                aria-pressed={isBookmarked}
+                className={`inline-flex items-center gap-2 rounded border px-6 py-2 transition ${
+                  isBookmarked
+                    ? 'border-blue-600 bg-blue-600 text-white'
+                    : 'border-gray-500 hover:bg-gray-800'
+                }`}
               >
-                <Bookmark size={18} fill={isBookmarked ? "white" : "none"} />
-                Bookmark
+                <Bookmark
+                  size={18}
+                  fill={isBookmarked ? 'currentColor' : 'none'}
+                />
+
+                {isBookmarked ? 'In Watchlist' : 'Add to Watchlist'}
               </button>
+
             </div>
+
           </div>
         </div>
-    
       </div>
-    </div>
+    </main>
   );
-};
-
-export default ProductPage;
+}

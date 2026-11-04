@@ -1,15 +1,17 @@
-import ResultsClient from "./ResultsClient"
+
+import ResultsClient from "./ResultsClient";
 
 interface PageProps {
-  searchParams: {
-    q?: string
-    genres?: string
-    platforms?: string
-    tags?: string
-    items?: string
-  }
+  searchParams: Promise<{
+    q?: string;
+    genres?: string;
+    type?: string;
+    items?: string;
+  }>;
 }
 
-export default function Page({ searchParams }: PageProps) {
-  return <ResultsClient searchParams={searchParams} />
+export default async function Page({ searchParams }: PageProps) {
+  const params = await searchParams;
+
+  return <ResultsClient searchParams={params} />;
 }

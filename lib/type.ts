@@ -1,135 +1,121 @@
-// ================= RAWG API TYPES =================
-import { ReactNode } from "react"
+export type WatchmodeTitleType =
+  | 'movie'
+  | 'tv_series'
+  | 'tv_special'
+  | 'tv_miniseries'
+  | 'short_film'
+  | 'tv_movie';
 
-export interface Genre {
-  id: number
-  slug: string
-  name: string
+export interface MovieCardItem {
+  id: number;
+  title: string;
+  year: number;
+  type: WatchmodeTitleType;
+  poster?: string | null;
+  backdrop?: string | null;
+  user_rating?: number | null;
 }
 
-export interface PlatformInfo {
-  platform: {
-    id: number
-    slug: string
-    name: string
-  }
-  released_at: string
-  requirements?: {
-    minimum?: string
-    recommended?: string
-  }
+export interface MovieListItem extends MovieCardItem {
+  imdb_id?: string | null;
+  tmdb_id?: number | null;
+  tmdb_type?: 'movie' | 'tv' | null;
 }
 
-export interface Platform {
-  id: number
-  slug: string
-  name: string
+export interface Movie extends MovieListItem {
+  original_title?: string | null;
+  plot_overview?: string | null;
+  will_you_like_this?: string | null;
+  review_summary?: string | null;
+
+  runtime_minutes?: number | null;
+  end_year?: number | null;
+  release_date?: string | null;
+
+  genres?: number[] | null;
+  genre_names?: string[] | null;
+
+  critic_score?: number | null;
+  us_rating?: string | null;
+  content_ratings?: Record<string, unknown> | null;
+
+  posterMedium?: string | null;
+  posterLarge?: string | null;
+  original_language?: string | null;
+
+  similar_titles?: number[] | null;
+  networks?: number[] | null;
+  network_names?: string[] | null;
+
+  relevance_percentile?: number | null;
+  popularity_percentile?: number | null;
+
+  trailer?: string | null;
+  trailer_thumbnail?: string | null;
 }
 
-export interface Tag {
-  id: number
-  slug: string
-  name: string
+export interface WatchmodeListResponse {
+  titles: MovieListItem[];
+  total_results?: number;
+  page?: number;
 }
 
-export interface ESRBRating {
-  id: number
-  slug: string
-  name: string
+export interface WatchmodeGenre {
+  id: number;
+  name: string;
 }
 
-export interface Game {
-  id: number
-  slug: string
-  name: string
-  released: string
-  tba: boolean
-  background_image: string
-  rating: number
-  rating_top: number
-  ratings: any
-  ratings_count: number
-  reviews_text_count: string
-  added: number
-  added_by_status: any
-  metacritic: number
-  playtime: number
-  suggestions_count: number
-  updated: string
-
-  genres?: Genre[]
-  platforms?: PlatformInfo[]
-  tags?: Tag[]
-  esrb_rating?: ESRBRating
+export interface MovieGenre extends WatchmodeGenre {
+  slug: string;
 }
 
-// ================= CONTEXT =================
-export interface GameContextType {
-  games: Game[]
-  isLoading: boolean
-  error: string | null
-
-  favorite: number[]
-  bookmark: number[]
- setGames: React.Dispatch<React.SetStateAction<Game[]>>;
-  handleBookmark: (gameId: number) => void
-  handleFavorite: (gameId: number) => void
+export interface WatchmodeAutocompleteItem {
+  id: number;
+  name: string;
+  type?: WatchmodeTitleType | string | null;
+  year?: number | null;
+  image_url?: string | null;
 }
 
-// ================= PROPS =================
-export interface GamesListProps {
-  gamesList: Game[]
-}
-export interface GameProviderProps {
-  children: ReactNode
+export interface WatchmodeAutocompleteResponse {
+  results: WatchmodeAutocompleteItem[];
 }
 
-export interface Filters {
-  searchTerm: string
-  selectedGenres: Genre[]
-  selectedPlatforms: Platform[]
-  selectedTags: Tag[]
-  itemsPerPage: number
+export interface MovieSearchResult {
+  id: number;
+  title: string;
+  year?: number | null;
+  type?: string | null;
+  image_url?: string | null;
 }
 
-export interface GameCardProps {
-  game: Game
-  isFavorite?: boolean
-  isBookmarked?: boolean
-  onFavorite?: () => void
-  onBookmark?: () => void
+export interface MovieListParams {
+  limit?: number;
+  page?: number;
+  types?: string;
+  sort_by?: string;
+  genres?: string;
 }
 
-
-export interface GameCardProps {
-  game: Game;
-   isFavorite?: boolean;      
-  isBookmarked?: boolean;    
-  onFavorite?: () => void;    
-  onBookmark?: () => void;  
+export interface MovieCardProps {
+  movie: MovieCardItem;
+  isFavorite?: boolean;
+  isBookmarked?: boolean;
+  onFavorite?: () => void;
+  onBookmark?: () => void;
 }
 
-export interface GameListProps {
-  gamesList: Game[]
+export interface MovieListProps {
+  moviesList: Movie[];
 }
 
 export interface GenreMapItem {
-  id: number
-  name: string
-  games: Game[]
+  id: number;
+  name: string;
+  slug: string;
+  movies: Movie[];
 }
-export interface SelectedFiltersProps {
-  selectedGenres: Genre[];
-  selectedPlatforms: Platform[];
-  selectedTags: Tag[];
-  onRemoveGenre: (slug: string) => void;
-  onRemovePlatform: (slug: string) => void;
-  onRemoveTag: (slug: string) => void;
-}
-export interface AdvancedGameFilterProps {
-  initialGenres?: string[];        
-  initialPlatforms?: string[];     
-  initialTags?: string[];          
-  initialSearch?: string;          
-  onChange: (filters: Filters) => void; 
+
+export interface MovieProviderProps {
+  children: React.ReactNode;
 }

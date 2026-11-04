@@ -28,7 +28,7 @@ const Footer = () => {
           </a>
         </div>
              <p className="text-sm text-gray-500">
-          &copy; {new Date().getFullYear()} GameInfo. All rights reserved.
+          &copy; {new Date().getFullYear()} MovieInfo. All rights reserved.
         </p>
       </div>
     </footer>

@@ -1,66 +1,89 @@
-'use client'
-import Link from "next/link"
-import { useState } from "react"
-import { ChevronDown } from "lucide-react"
-import { useMe } from "@/hooks/useMe"
-import { useQueryClient } from "@tanstack/react-query"
-import { useRouter } from "next/navigation"
-import { toast } from "react-toastify"
-import { Avatarprofil } from "../avatar"
-import SiteIcon from "../siteicon"
-import { Button } from "@/components/ui/button"
-import { GameSearch } from "./GameSearch"
-import MobileNavbarBottom from "./mobileNavbar/navBotton"
-const NavBar = () => {
-  const [isAvatarOpen, setIsAvatarOpen] = useState(false)
-  //for checkng auth for ui
-  const { data: user } = useMe()
-  
-  const queryClient = useQueryClient()
-  const router = useRouter()
+'use client';
+
+import Link from 'next/link';
+import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
+
+import { useMe } from '@/hooks/useMe';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+
+import { Avatarprofil } from '../avatar';
+import SiteIcon from '../siteicon';
+import { Button } from '@/components/ui/button';
+
+import { MovieSearch } from './movieSearch';
+import MobileNavbarBottom from './mobileNavbar/navBotton';
+
+export default function NavBar() {
+  const [isAvatarOpen, setIsAvatarOpen] = useState(false);
+
+  const { data: user } = useMe();
+
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
   const publicLinks = [
-    { id: 1, name: "Home", path: "/" },
-    { id: 2, name: "Games", path: "/products" },
-  ]
+    { id: 1, name: 'Home', path: '/' },
+    { id: 2, name: 'Movies', path: '/products' },
+  ];
+
   const onLogout = () => {
-    localStorage.removeItem("token")
-    queryClient.setQueryData(["me"], null)
-    queryClient.invalidateQueries({ queryKey: ["me"] })
-    toast("Logged out")
-    router.replace("/")
-  }
+    localStorage.removeItem('token');
+
+    queryClient.setQueryData(['me'], null);
+    queryClient.invalidateQueries({ queryKey: ['me'] });
+
+    setIsAvatarOpen(false);
+
+    toast.success('Logged out');
+
+    router.replace('/');
+  };
 
   return (
-    <nav className="lg:relative sticky  z-999 w-full bg-gray-950 text-amber-50 h-20 px-6 md:px-20 flex items-center">
+    <nav className="sticky top-0 z-999 flex h-20 w-full items-center bg-gray-950 px-6 text-amber-50 md:px-20">
 
-      {/*  DESKTOP  */}
-      <div className="hidden   md:flex w-full items-center">
+      {/* DESKTOP NAVBAR */}
+      <div className="hidden w-full items-center md:flex">
 
-  <SiteIcon/>
+        <SiteIcon />
 
-<GameSearch/>
-       
-        {/* Right */}
-        <div className="flex-1 flex justify-end items-center gap-10">
-          {publicLinks.map(link => (
-            <Link key={link.id} href={link.path} className="hover:text-amber-100">
+        <MovieSearch />
+
+        {/* Right section */}
+        <div className="flex flex-1 items-center justify-end gap-10">
+
+          {publicLinks.map((link) => (
+            <Link
+              key={link.id}
+              href={link.path}
+              className="hover:text-amber-300 transition-colors"
+            >
               {link.name}
             </Link>
           ))}
 
           {user ? (
             <div className="relative">
+
               <Button
-                onClick={() => setIsAvatarOpen(prev => !prev)}
-                className="flex items-center gap-2 hover:bg-gray-800 p-1 rounded-full"
+                onClick={() =>
+                  setIsAvatarOpen((previous) => !previous)
+                }
+                className="flex items-center gap-2 rounded-full p-1 hover:bg-gray-800"
+                aria-expanded={isAvatarOpen}
+                aria-label="Open user menu"
               >
                 <Avatarprofil />
-                <ChevronDown className="w-4 h-4" />
+
+                <ChevronDown className="h-4 w-4" />
               </Button>
 
               {isAvatarOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-700 rounded shadow-lg">
+                <div className="absolute right-0 z-50 mt-2 w-40 rounded border border-gray-700 bg-gray-900 shadow-lg">
+
                   <Link
                     href="/dashboard"
                     className="block px-4 py-2 hover:bg-gray-700"
@@ -68,34 +91,50 @@ const NavBar = () => {
                   >
                     Dashboard
                   </Link>
+
                   <Button
                     onClick={onLogout}
-                    className="w-full text-left px-4 py-2  hover:bg-gray-700"
+                    className="w-full px-4 py-2 text-left hover:bg-gray-700"
                   >
                     Logout
                   </Button>
+
                 </div>
               )}
+
             </div>
           ) : (
             <Link
               href="/login"
-              className="border border-amber-300 hover:text-gray-900 hover:bg-amber-400 px-3 py-1 rounded"
+              className="rounded border border-amber-300 px-3 py-1 transition-colors hover:bg-amber-400 hover:text-gray-900"
             >
               Login
             </Link>
           )}
+
         </div>
       </div>
 
-      {/* ===== MOBILE ===== */}
-      <div className=" md:hidden w-full flex justify-around items-center">
-      <img src="/img/icon.png" alt="Website Icon" className="h-12" />
-<div className="px-5 flex justify-center"><GameSearch/></div>
-        </div>
-   <MobileNavbarBottom loginStat={user}/>
-          </nav>
-  )
-}
+      {/* MOBILE TOP NAVBAR */}
+      <div className="flex w-full items-center justify-around md:hidden">
 
-export default NavBar
+        <Link href="/" aria-label="Homepage">
+          <img
+            src="/img/icon.png"
+            alt="Website Icon"
+            className="h-12"
+          />
+        </Link>
+
+        <div className="flex flex-1 justify-center px-5">
+          <MovieSearch />
+        </div>
+
+      </div>
+
+      {/* MOBILE BOTTOM NAVBAR */}
+      <MobileNavbarBottom loginStat={Boolean(user)} />
+
+    </nav>
+  );
+}

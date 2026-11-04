@@ -1,43 +1,76 @@
-import { SelectedFiltersProps } from '@/lib/type';
+import type { MovieGenre } from '@/lib/type';
 
-export const SelectedFilters = ({
+interface SelectedFiltersProps {
+  selectedGenres: MovieGenre[];
+  selectedType: 'all' | 'movie' | 'tv_series';
+  onRemoveGenre: (slug: string) => void;
+  onRemoveType: () => void;
+}
+
+export function SelectedFilters({
   selectedGenres,
-  selectedPlatforms,
-  selectedTags,
+  selectedType,
   onRemoveGenre,
-  onRemovePlatform,
-  onRemoveTag
-}: SelectedFiltersProps) => (
-  <div className="mt-4 space-y-2">
-    {selectedGenres.length > 0 && (
-      <div className="flex flex-wrap gap-2 items-center">
-        <span className="text-sm text-gray-400">Genres:</span>
-        {selectedGenres.map(g => (
-          <span key={g.slug} className="px-3 py-1 text-xs rounded-full bg-amber-500/20 text-amber-400 flex items-center gap-2">
-            {g.name} <button onClick={() => onRemoveGenre(g.slug)} className="hover:text-amber-300">×</button>
+  onRemoveType,
+}: SelectedFiltersProps) {
+  return (
+    <div className="mt-4 space-y-3">
+
+      {/* Selected genres */}
+      {selectedGenres.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+
+          <span className="text-sm text-gray-400">
+            Genres:
           </span>
-        ))}
-      </div>
-    )}
-    {selectedPlatforms.length > 0 && (
-      <div className="flex flex-wrap gap-2 items-center">
-        <span className="text-sm text-gray-400">Platforms:</span>
-        {selectedPlatforms.map(p => (
-          <span key={p.slug} className="px-3 py-1 text-xs rounded-full bg-blue-500/20 text-blue-400 flex items-center gap-2">
-            {p.name} <button onClick={() => onRemovePlatform(p.slug)} className="hover:text-blue-300">×</button>
+
+          {selectedGenres.map((genre) => (
+            <span
+              key={genre.id}
+              className="flex items-center gap-2 rounded-full bg-amber-500/20 px-3 py-1 text-xs text-amber-400"
+            >
+              {genre.name}
+
+              <button
+                type="button"
+                onClick={() => onRemoveGenre(genre.slug)}
+                aria-label={`Remove ${genre.name} genre`}
+                className="hover:text-amber-200"
+              >
+                ×
+              </button>
+            </span>
+          ))}
+
+        </div>
+      )}
+
+      {/* Selected type */}
+      {selectedType !== 'all' && (
+        <div className="flex flex-wrap items-center gap-2">
+
+          <span className="text-sm text-gray-400">
+            Type:
           </span>
-        ))}
-      </div>
-    )}
-    {selectedTags.length > 0 && (
-      <div className="flex flex-wrap gap-2 items-center">
-        <span className="text-sm text-gray-400">Tags:</span>
-        {selectedTags.map(t => (
-          <span key={t.slug} className="px-3 py-1 text-xs rounded-full bg-green-500/20 text-green-400 flex items-center gap-2">
-            {t.name} <button onClick={() => onRemoveTag(t.slug)} className="hover:text-green-300">×</button>
+
+          <span className="flex items-center gap-2 rounded-full bg-blue-500/20 px-3 py-1 text-xs text-blue-400">
+
+            {selectedType === 'movie' ? 'Movies' : 'TV Shows'}
+
+            <button
+              type="button"
+              onClick={onRemoveType}
+              aria-label="Remove type filter"
+              className="hover:text-blue-200"
+            >
+              ×
+            </button>
+
           </span>
-        ))}
-      </div>
-    )}
-  </div>
-);
+
+        </div>
+      )}
+
+    </div>
+  );
+}

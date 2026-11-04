@@ -1,103 +1,442 @@
-'use client'
 
-import { useGames } from '@/providers/context'
-import AdvancedGameFilter from '@/app/components/advSearch/advanceSearch'
-import { useGameFilters } from '@/hooks/useGameFilters'
-import { Genre, Platform, Tag } from '@/lib/type'
+'use client';
+
+import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+
+import AdvancedMovieFilter from '@/app/components/advSearch/advanceSearch';
+import MovieCard from '@/app/components/movieSection/moviesCard';
+import Loading from '@/app/components/Loading';
+
+import {
+  useHomeMovies,
+  useMovieGenres,
+  useMovieSearch,
+} from '@/hooks/useMovies';
+
+import { fetchMovies } from '@/lib/api-calls';
 
 interface Props {
   searchParams: {
-    q?: string
-    genres?: string
-    platforms?: string
-    tags?: string
-    items?: string
-  }
+    q?: string;
+    genres?: string;
+    type?: string;
+    items?: string;
+    page?: string;
+  };
 }
 
 export default function ResultsClient({ searchParams }: Props) {
-  const { games } = useGames()
+  const router = useRouter();
 
-  if (!games || games.length === 0) return null
+  // ======================================
+  // URL PARAMETERS
+  // ======================================
 
-  const initialSearch = searchParams.q ?? ''
+  const searchTerm = searchParams.q?.trim() ?? '';
+  const isSearchMode = searchTerm.length > 0;
 
-  // Map slugs from query params to full objects, fallback id: -1
-  const initialGenres: Genre[] =
-    searchParams.genres?.split(',').filter(Boolean).map(slug => {
-      const genre = games.flatMap(g => g.genres ?? []).find(g => g.slug === slug)
-      return genre ?? { id: -1, slug, name: slug }
-    }) ?? []
+  const genreIds = (searchParams.genres ?? '')
+    .split(',')
+    .map(Number)
+    .filter((id) => Number.isSafeInteger(id) && id > 0);
 
-  const initialPlatforms: Platform[] =
-    searchParams.platforms?.split(',').filter(Boolean).map(slug => {
-      const platform = games
-        .flatMap(g => g.platforms ?? [])
-        .map(p => p.platform)
-        .find(p => p.slug === slug)
-      return platform ?? { id: -1, slug, name: slug }
-    }) ?? []
+  const genresParam = genreIds.join(',');
 
-  const initialTags: Tag[] =
-    searchParams.tags?.split(',').filter(Boolean).map(slug => {
-      const tag = games.flatMap(g => g.tags ?? []).find(t => t.slug === slug)
-      return tag ?? { id: -1, slug, name: slug }
-    }) ?? []
+  const selectedType =
+    searchParams.type === 'movie' ||
+    searchParams.type === 'tv_series'
+      ? searchParams.type
+      : 'all';
 
-  const initialItems = Number(searchParams.items ?? '20')
+  const requestedItems = Number(searchParams.items ?? 20);
 
-  // Use reusable hook
-  const { filters, setFilters, filteredGames } = useGameFilters(games, {
-    searchTerm: initialSearch,
-    selectedGenres: initialGenres,
-    selectedPlatforms: initialPlatforms,
-    selectedTags: initialTags,
-    itemsPerPage: initialItems,
-  })
+  const itemsPerPage = [10, 20, 40].includes(requestedItems)
+    ? requestedItems
+    : 20;
 
-  const handleFiltersChange = (newValues: {
-    searchTerm: string
-    selectedGenres: Genre[]
-    selectedPlatforms: Platform[]
-    selectedTags: Tag[]
-    itemsPerPage: number
-  }) => setFilters(newValues)
+  const requestedPage = Number(searchParams.page ?? 1);
+
+  const currentPage =
+    Number.isSafeInteger(requestedPage) && requestedPage > 0
+      ? requestedPage
+      : 1;
+
+  // ======================================
+  // INITIAL 100 MOVIES
+  // ======================================
+
+  const {
+    data: homeMovies = [],
+    isLoading: isHomeLoading,
+    isError: isHomeError,
+  } = useHomeMovies();
+
+  // ======================================
+  // GENRES
+  // ======================================
+
+  const {
+    data: genres = [],
+  } = useMovieGenres();
+
+  const initialGenreSlugs = genres
+    .filter((genre) => genreIds.includes(genre.id))
+    .map((genre) => genre.slug);
+
+  // ======================================
+  // CHECK AVAILABLE GENRE METADATA
+  // ======================================
+
+  const homeHasGenreMetadata =
+    homeMovies.length > 0 &&
+    homeMovies.every(
+      (movie) =>
+        Array.isArray(movie.genres) ||
+        Array.isArray(movie.genre_names)
+    );
+
+  // ======================================
+  // LOCAL FILTERING
+  // ======================================
+
+  const locallyFilteredMovies = useMemo(() => {
+    let result = [...homeMovies];
+
+    // Filter by movie type
+    if (selectedType !== 'all') {
+      result = result.filter(
+        (movie) => movie.type === selectedType
+      );
+    }
+
+    // Filter by genre when the homepage data contains genres
+    if (genreIds.length > 0 && homeHasGenreMetadata) {
+      result = result.filter((movie) =>
+        genreIds.every((genreId) => {
+          const genreName = genres.find(
+            (genre) => genre.id === genreId
+          )?.name;
+
+          const matchesGenreId =
+            movie.genres?.includes(genreId) ?? false;
+
+          const matchesGenreName =
+            genreName !== undefined &&
+            (movie.genre_names?.includes(genreName) ?? false);
+
+          return matchesGenreId || matchesGenreName;
+        })
+      );
+    }
+
+    return result;
+  }, [
+    homeMovies,
+    selectedType,
+    genreIds,
+    homeHasGenreMetadata,
+    genres,
+  ]);
+
+  // ======================================
+  // REMOTE GENRE FILTER FALLBACK
+  // ======================================
+
+  // If the initial 100 movies don't contain genre metadata,
+  // ask Watchmode to filter its catalogue by genre instead.
+  const shouldFetchRemoteBrowse =
+    !isSearchMode &&
+    !isHomeLoading &&
+    genreIds.length > 0 &&
+    !homeHasGenreMetadata;
+
+  const {
+    data: remoteMovieData,
+    isLoading: isRemoteLoading,
+    isError: isRemoteError,
+  } = useQuery({
+    queryKey: [
+      'movie-results',
+      itemsPerPage,
+      currentPage,
+      selectedType,
+      genresParam,
+    ],
+
+    queryFn: () =>
+      fetchMovies({
+        limit: itemsPerPage,
+        page: currentPage,
+        types:
+          selectedType === 'all'
+            ? 'movie,tv_series'
+            : selectedType,
+        genres: genresParam,
+      }),
+
+    enabled: shouldFetchRemoteBrowse,
+
+    staleTime: 30 * 60 * 1000,
+  });
+
+  // ======================================
+  // TITLE SEARCH
+  // ======================================
+
+  const {
+    data: searchResults = [],
+    isLoading: isSearchLoading,
+    isError: isSearchError,
+  } = useMovieSearch(searchTerm);
+
+  const filteredSearchResults = searchResults.filter((movie) => {
+    if (selectedType === 'all') {
+      return true;
+    }
+
+    return movie.type === selectedType;
+  });
+
+  // ======================================
+  // BROWSE RESULTS
+  // ======================================
+
+  const remoteMovies = remoteMovieData?.titles ?? [];
+
+  const browseMovies = shouldFetchRemoteBrowse
+    ? remoteMovies
+    : locallyFilteredMovies;
+
+  const totalResults = shouldFetchRemoteBrowse
+    ? remoteMovieData?.total_results ?? remoteMovies.length
+    : locallyFilteredMovies.length;
+
+  const totalPages =
+    shouldFetchRemoteBrowse &&
+    remoteMovieData?.total_results === undefined
+      ? undefined
+      : Math.max(1, Math.ceil(totalResults / itemsPerPage));
+
+  // Local data is paginated in the browser.
+  // Remote data is already paginated by Watchmode.
+  const displayedMovies = shouldFetchRemoteBrowse
+    ? remoteMovies
+    : locallyFilteredMovies.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+      );
+
+  const hasNextPage = shouldFetchRemoteBrowse
+    ? totalPages !== undefined
+      ? currentPage < totalPages
+      : remoteMovies.length === itemsPerPage
+    : currentPage < (totalPages ?? 1);
+
+  // ======================================
+  // LOADING AND ERROR STATES
+  // ======================================
+
+  const isLoading = isSearchMode
+    ? isSearchLoading
+    : shouldFetchRemoteBrowse
+      ? isRemoteLoading
+      : isHomeLoading;
+
+  const hasError = isSearchMode
+    ? isSearchError
+    : shouldFetchRemoteBrowse
+      ? isRemoteError
+      : isHomeError;
+
+  // ======================================
+  // PAGINATION NAVIGATION
+  // ======================================
+
+  const changePage = (page: number) => {
+    if (page < 1) return;
+
+    const params = new URLSearchParams();
+
+    if (searchParams.q) {
+      params.set('q', searchParams.q);
+    }
+
+    if (searchParams.genres) {
+      params.set('genres', searchParams.genres);
+    }
+
+    if (searchParams.type) {
+      params.set('type', searchParams.type);
+    }
+
+    params.set('items', String(itemsPerPage));
+    params.set('page', String(page));
+
+    router.push(`/products/results?${params.toString()}`);
+  };
+
+  // ======================================
+  // RENDER
+  // ======================================
 
   return (
-    <div className="max-w-7xl mx-auto p-4  min-h-screen ">
-      <AdvancedGameFilter
-        initialSearch={initialSearch}
-        initialGenres={filters.selectedGenres.map(g => g.slug)}
-        initialPlatforms={filters.selectedPlatforms.map(p => p.slug)}
-        initialTags={filters.selectedTags.map(t => t.slug)}
-        onChange={handleFiltersChange}
+    <main className="mx-auto min-h-screen max-w-7xl p-4">
+
+      <AdvancedMovieFilter
+        initialSearch={searchTerm}
+        initialGenres={initialGenreSlugs}
+        initialType={selectedType}
+        genres={genres}
       />
 
-      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ">
-        {filteredGames.map(game => (
-          <a
-            key={game.id}
-            href={`/products/${game.id}`}
-            className="group bg-gray-800 rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.04] hover:shadow-xl hover:shadow-amber-900/30"
-          >
-            <div className="relative aspect-4/3 overflow-hidden">
-              <img
-                src={game.background_image}
-                alt={game.name}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute top-2 right-2 bg-black/70 px-2 py-1 rounded text-xs text-white">
-                ⭐ {game.rating}
-              </div>
-            </div>
-            <div className="p-4">
-              <h3 className="text-lg font-semibold text-white group-hover:text-amber-400 transition-colors line-clamp-2">
-                {game.name}
-              </h3>
-            </div>
-          </a>
-        ))}
+      <div className="mb-6 mt-10 flex flex-wrap items-center justify-between gap-3">
+
+        <h1 className="text-2xl font-bold text-white md:text-3xl">
+          {isSearchMode
+            ? 'Search Results'
+            : 'Discover Movies & TV Shows'}
+        </h1>
+
+        <p className="text-sm text-gray-400">
+          {isSearchMode
+            ? `${filteredSearchResults.length} suggestions`
+            : `${totalResults} titles`}
+        </p>
+
       </div>
-    </div>
-  )
+
+      {isSearchMode && genreIds.length > 0 && (
+        <p className="mb-5 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300">
+          Genre filtering is not combined with title autocomplete.
+          Remove the search term to browse by genre.
+        </p>
+      )}
+
+      {isLoading && <Loading />}
+
+      {hasError && (
+        <div className="py-16 text-center text-red-400">
+          Failed to load results. Please try again.
+        </div>
+      )}
+
+      {/* SEARCH RESULTS */}
+
+      {!isLoading && !hasError && isSearchMode && (
+        <>
+          {filteredSearchResults.length === 0 ? (
+            <div className="py-16 text-center text-gray-400">
+              {searchTerm.length < 3
+                ? 'Enter at least three characters to search.'
+                : 'No matching titles found.'}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+
+              {filteredSearchResults.map((movie) => (
+                <a
+                  key={movie.id}
+                  href={`/products/${movie.id}`}
+                  className="group overflow-hidden rounded-xl bg-gray-800 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl hover:shadow-amber-900/30"
+                >
+                  <div className="relative aspect-[2/3] overflow-hidden bg-gray-950">
+
+                    {movie.image_url ? (
+                      <img
+                        src={movie.image_url}
+                        alt={movie.title}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center p-4 text-center text-gray-400">
+                        {movie.title}
+                      </div>
+                    )}
+
+                  </div>
+
+                  <div className="p-4">
+
+                    <h2 className="line-clamp-2 text-base font-semibold text-white transition-colors group-hover:text-amber-400">
+                      {movie.title}
+                    </h2>
+
+                    <p className="mt-2 text-xs text-gray-400">
+                      {[
+                        movie.year,
+                        movie.type === 'movie'
+                          ? 'Movie'
+                          : movie.type === 'tv_series'
+                            ? 'TV Show'
+                            : movie.type,
+                      ]
+                        .filter(Boolean)
+                        .join(' · ')}
+                    </p>
+
+                  </div>
+                </a>
+              ))}
+
+            </div>
+          )}
+        </>
+      )}
+
+      {/* BROWSE RESULTS */}
+
+      {!isLoading && !hasError && !isSearchMode && (
+        <>
+          {displayedMovies.length === 0 ? (
+            <div className="py-16 text-center text-gray-400">
+              No titles found with these filters.
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+
+              {displayedMovies.map((movie) => (
+                <MovieCard
+                  key={movie.id}
+                  movie={movie}
+                />
+              ))}
+
+            </div>
+          )}
+
+          {/* PAGINATION */}
+
+          <div className="mt-16 flex items-center justify-center gap-4">
+
+            <button
+              type="button"
+              onClick={() => changePage(currentPage - 1)}
+              disabled={currentPage === 1 || isLoading}
+              className="rounded bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Previous
+            </button>
+
+            <span className="text-sm text-gray-300">
+              Page {currentPage}
+              {totalPages !== undefined && ` of ${totalPages}`}
+            </span>
+
+            <button
+              type="button"
+              onClick={() => changePage(currentPage + 1)}
+              disabled={!hasNextPage || isLoading}
+              className="rounded bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Next
+            </button>
+
+          </div>
+        </>
+      )}
+
+    </main>
+  );
 }

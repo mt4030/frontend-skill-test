@@ -1,41 +1,108 @@
 
-import { useMutation, useQueries } from "@tanstack/react-query";
-import axios from "axios";
-import React, { useEffect } from "react";
+import axios from 'axios';
 
-////api call to get number of games as initial data just as mounts for first time 
-export async function fetchGames(limit: number = 40) {
-  const API_KEY = process.env.NEXT_PUBLIC_RAWG_API_KEY;
-  if (!API_KEY) throw new Error('RAWG_API_KEY not defined');
+import type {
+  Movie,
+  MovieGenre,
+  MovieListParams,
+  MovieSearchResult,
+  WatchmodeAutocompleteResponse,
+  WatchmodeGenre,
+  WatchmodeListResponse,
+} from '@/lib/type';
 
-  try {
-    const response  =await axios.get(`https://api.rawg.io/api/games?key=${API_KEY}&page_size=${limit}`)
- if(response.status===200){
- 
-  return response.data
- }
- else{
-   console.error('Failed to fetch data:', response.statusText);
- }
-  } catch (err) {
-    console.error('RAWG fetch error:', err);
-    return []; 
-  }
+// ======================================
+// HOMEPAGE
+// ======================================
+
+export async function fetchHomeMovies(): Promise<Movie[]> {
+  const response = await axios.get<Movie[]>('/api/home');
+
+  return response.data;
 }
 
-/////api call for searching and live from all games in database
-export const searchingLive = async (input: string) => {
-  const API_KEY = process.env.NEXT_PUBLIC_RAWG_API_KEY
+// ======================================
+// MOVIE LIST
+// ======================================
 
-  const response = await axios.get(
-    "https://api.rawg.io/api/games",
+export async function fetchMovies(
+  params: MovieListParams = {}
+): Promise<WatchmodeListResponse> {
+  const response = await axios.get<WatchmodeListResponse>(
+    '/api/title',
+    {
+      params,
+    }
+  );
+
+  return response.data;
+}
+
+// ======================================
+// LIVE SEARCH
+// ======================================
+
+export async function searchMoviesLive(
+  input: string
+): Promise<MovieSearchResult[]> {
+  const query = input.trim();
+
+  if (query.length < 3) {
+    return [];
+  }
+
+  const response = await axios.get<WatchmodeAutocompleteResponse>(
+    '/api/search',
     {
       params: {
-        key: API_KEY,
-        search: input,
-        page_size: 4,
+        q: query,
       },
     }
-  )
-  return response.data
+  );
+
+  return response.data.results.map((item) => ({
+    id: item.id,
+    title: item.name,
+    year: item.year ?? null,
+    type: item.type ?? null,
+    image_url: item.image_url ?? null,
+  }));
+}
+
+// ======================================
+// MOVIE DETAILS
+// ======================================
+
+export async function fetchMovieDetails(
+  id: number
+): Promise<Movie> {
+  const response = await axios.get<Movie>(
+    `/api/title/${id}`
+  );
+
+  return response.data;
+}
+
+
+
+//genres
+
+function slugifyGenre(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+export async function fetchMovieGenres(): Promise<MovieGenre[]> {
+  const response = await axios.get<WatchmodeGenre[]>(
+    '/api/genres'
+  );
+
+  return response.data.map((genre) => ({
+    id: genre.id,
+    name: genre.name,
+    slug: slugifyGenre(genre.name),
+  }));
 }

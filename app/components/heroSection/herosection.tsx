@@ -1,20 +1,19 @@
-import HeroCarousel from './heroCarousel'
-import { Game } from '@/lib/type'
-import HeroCallToAdvSearch from './heroCallToAdvSearch'
+import HeroCarousel from './heroCarousel';
+import HeroCallToAdvSearch from './heroCallToAdvSearch';
+
+import type { Movie } from '@/lib/type';
 
 interface HeroSectionProps {
-  gamesList: Game[]
+  moviesList: Movie[];
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ gamesList }) => {
-
-
+export default function HeroSection({
+  moviesList,
+}: HeroSectionProps) {
   return (
-    <section className='lg:min-h-screen lg:flex lg:flex-col lg:gap-5 '>
-      <HeroCarousel gamesList={gamesList} />
-      <HeroCallToAdvSearch/>
+    <section className="lg:flex lg:min-h-screen lg:flex-col lg:gap-5">
+      <HeroCarousel moviesList={moviesList} />
+      <HeroCallToAdvSearch />
     </section>
-  )
+  );
 }
-
-export default HeroSection

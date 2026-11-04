@@ -1,31 +1,49 @@
+import type { Movie, MovieGenre } from '@/lib/type';
 
-import { Game, Genre, Platform, Tag } from '@/lib/type';
+function slugifyGenre(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
 
-export const getUniqueGenres = (games: Game[]): Genre[] =>
-  Array.from(
-    new Map(
-      games.flatMap(game => game.genres || [])
-           .map(g => [g.slug, { id: g.id, slug: g.slug, name: g.name }])
-    ).values()
-  );
+export function getUniqueGenres(movies: Movie[]): MovieGenre[] {
+  const genres = new Map<number, MovieGenre>();
 
-export const getUniquePlatforms = (games: Game[]): Platform[] =>
-  Array.from(
-    new Map(
-      games.flatMap(game => game.platforms || [])
-           .map(p => [p.platform.slug, { id: p.platform.id, slug: p.platform.slug, name: p.platform.name }])
-    ).values()
-  );
+  movies.forEach((movie) => {
+    movie.genre_names?.forEach((name, index) => {
+      const id = movie.genres?.[index];
 
-export const getUniqueTags = (games: Game[]): Tag[] =>
-  Array.from(
-    new Map(
-      games.flatMap(game => game.tags || [])
-           .map(t => [t.slug, { id: t.id, slug: t.slug, name: t.name }])
-    ).values()
-  );
+      if (id === undefined || genres.has(id)) {
+        return;
+      }
 
-export const filterLiveSearch = (games: Game[], searchTerm: string, limit = 5) =>
-  games
-    .filter(g => g.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      genres.set(id, {
+        id,
+        name,
+        slug: slugifyGenre(name),
+      });
+    });
+  });
+
+  return Array.from(genres.values());
+}
+
+export function filterLiveSearch(
+  movies: Movie[],
+  searchTerm: string,
+  limit = 5
+): Movie[] {
+  const term = searchTerm.trim().toLowerCase();
+
+  if (!term) {
+    return [];
+  }
+
+  return movies
+    .filter((movie) =>
+      movie.title.toLowerCase().includes(term)
+    )
     .slice(0, limit);
+}

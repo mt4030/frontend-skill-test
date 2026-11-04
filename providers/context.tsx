@@ -1,72 +1,92 @@
 'use client';
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+
+import {
+  createContext,
+  useContext,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+} from 'react';
+
 import { useRouter } from 'next/navigation';
+
 import { useMe } from '@/hooks/useMe';
-import { fetchGames } from '../lib/api-calls';
-import { Game, GameContextType, GameProviderProps } from "@/lib/type";
 import { usePersistedState } from '@/lib/persistrdstate';
 
-const GameContext = createContext<GameContextType | undefined>(undefined);
+interface MovieContextType {
+  favorite: number[];
+  bookmark: number[];
+  handleBookmark: (movieId: number) => void;
+  handleFavorite: (movieId: number) => void;
+}
 
-export const GameProvider = ({ children }: GameProviderProps) => {
-  const [games, setGames] = usePersistedState<Game[]>('games', []);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [favorite, setFavorite] = usePersistedState<number[]>('favorites', []);
-  const [bookmark, setBookmark] = usePersistedState<number[]>('bookmarks', []);
+interface MovieProviderProps {
+  children: ReactNode;
+}
+
+const MovieContext = createContext<MovieContextType | undefined>(undefined);
+
+export function MovieProvider({ children }: MovieProviderProps) {
+  const [favorite, setFavorite] = usePersistedState<number[]>(
+    'movie-favorites',
+    []
+  );
+
+  const [bookmark, setBookmark] = usePersistedState<number[]>(
+    'movie-bookmarks',
+    []
+  );
 
   const { data: user } = useMe();
   const router = useRouter();
 
-  // ================= FETCH GAMES =================
-  const fetchAndSaveGames = useCallback(async () => {
-    try {
-      const data = await fetchGames(200);
-      setGames(data.results); // saved automatically to localStorage
-      setIsLoading(false);
-    } catch {
-      setError('Failed to fetch games');
-      setIsLoading(false);
-    }
-  }, [setGames]);
-
-  // ================= INITIAL LOAD =================
-  useEffect(() => {
-    // if localStorage is empty, fetch from API
-    if (!games || games.length === 0) {
-      fetchAndSaveGames();
-    } else {
-      setIsLoading(false);
-    }
-  }, [fetchAndSaveGames, games]);
-
-  // ================= TOGGLE HELPERS =================
   const toggleItem = (
     list: number[],
-    setList: React.Dispatch<React.SetStateAction<number[]>>,
-    gameId: number
+    setList: Dispatch<SetStateAction<number[]>>,
+    movieId: number
   ) => {
     if (!user) {
       router.push('/login');
       return;
     }
-    const updated = list.includes(gameId) ? list.filter(id => id !== gameId) : [...list, gameId];
-    setList(updated); // automatically persists via usePersistedState
+
+    setList((current) =>
+      current.includes(movieId)
+        ? current.filter((id) => id !== movieId)
+        : [...current, movieId]
+    );
   };
 
-  const handleBookmark = (gameId: number) => toggleItem(bookmark, setBookmark, gameId);
-  const handleFavorite = (gameId: number) => toggleItem(favorite, setFavorite, gameId);
+  const handleBookmark = (movieId: number) => {
+    toggleItem(bookmark, setBookmark, movieId);
+  };
 
-  // ================= CONTEXT VALUE =================
-  const value: GameContextType = { games, isLoading, error, favorite, bookmark, handleBookmark, handleFavorite ,setGames};
-  return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
-};
+  const handleFavorite = (movieId: number) => {
+    toggleItem(favorite, setFavorite, movieId);
+  };
 
-export const useGames = (): GameContextType => {
-  const context = useContext(GameContext);
-  if (!context) throw new Error('useGames must be used within a GameProvider');
+  return (
+    <MovieContext.Provider
+      value={{
+        favorite,
+        bookmark,
+        handleBookmark,
+        handleFavorite,
+      }}
+    >
+      {children}
+    </MovieContext.Provider>
+  );
+}
+
+export function useMoviesContext(): MovieContextType {
+  const context = useContext(MovieContext);
+
+  if (!context) {
+    throw new Error(
+      'useMoviesContext must be used within a MovieProvider'
+    );
+  }
+
   return context;
-};
-
-
-
+}
