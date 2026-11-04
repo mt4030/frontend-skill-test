@@ -3,16 +3,13 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-
 import { useMe } from '@/hooks/useMe';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-
 import { Avatarprofil } from '../avatar';
 import SiteIcon from '../siteicon';
 import { Button } from '@/components/ui/button';
-
 import { MovieSearch } from './movieSearch';
 import MobileNavbarBottom from './mobileNavbar/navBotton';
 
@@ -45,14 +42,14 @@ export default function NavBar() {
   return (
     <nav className="sticky top-0 z-999 flex h-20 w-full items-center bg-gray-950 px-6 text-amber-50 md:px-20">
 
-      {/* DESKTOP NAVBAR */}
+    
       <div className="hidden w-full items-center md:flex">
 
         <SiteIcon />
 
         <MovieSearch />
 
-        {/* Right section */}
+      
         <div className="flex flex-1 items-center justify-end gap-10">
 
           {publicLinks.map((link) => (
@@ -115,7 +112,7 @@ export default function NavBar() {
         </div>
       </div>
 
-      {/* MOBILE TOP NAVBAR */}
+      {/* mobile top nav */}
       <div className="flex w-full items-center justify-around md:hidden">
 
         <Link href="/" aria-label="Homepage">
@@ -132,7 +129,7 @@ export default function NavBar() {
 
       </div>
 
-      {/* MOBILE BOTTOM NAVBAR */}
+      {/* mobile bot nav */}
       <MobileNavbarBottom loginStat={Boolean(user)} />
 
     </nav>

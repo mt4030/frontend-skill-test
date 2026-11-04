@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { useRouter } from 'next/navigation';
-
 import Dropdown from './dropdown';
 import { LiveSearchResults } from './LiveSearchResults';
 import { SelectedFilters } from './SelectedFilters';
@@ -62,14 +61,9 @@ export default function AdvancedMovieFilter({
 }: AdvancedMovieFilterProps) {
   const router = useRouter();
 
-  // Search input
   const [searchTerm, setSearchTerm] = useState(initialSearch);
-
   const [debouncedSearch] = useDebounce(searchTerm, 400);
-
-  // Selected filters
   const [selectedGenres, setSelectedGenres] = useState<MovieGenre[]>([]);
-
   const [selectedType, setSelectedType] =
     useState<MovieTypeOption>(movieTypes[0]);
 
@@ -77,23 +71,22 @@ export default function AdvancedMovieFilter({
     name: '20',
   });
 
-  // Fetch available Watchmode genres
+  /// fetch available Watchmode genres
   const {
     data: fetchedGenres = [],
     isLoading: isGenresLoading,
     isError: isGenresError,
   } = useMovieGenres();
 
-  // Allow genres to be supplied by a parent, but fetch them automatically otherwise.
   const availableGenres = providedGenres ?? fetchedGenres;
 
-  // Live autocomplete
+  //// live autocomplete
   const {
     data: liveSearchResults = [],
     isFetching: isSearchLoading,
   } = useMovieSearch(debouncedSearch);
 
-  // Restore initial genre selections after genres are loaded
+  /// restore initial genre selections after genres are loaded
   const initialGenreKey = initialGenres.join(',');
 
   useEffect(() => {
@@ -104,7 +97,7 @@ export default function AdvancedMovieFilter({
     );
   }, [initialGenreKey, availableGenres]);
 
-  // Restore initial type
+  //// restore initial type
   useEffect(() => {
     const type =
       movieTypes.find((item) => item.value === initialType) ??
@@ -118,7 +111,7 @@ export default function AdvancedMovieFilter({
     setSearchTerm(initialSearch);
   }, [initialSearch]);
 
-  // Apply filters
+  // apply filters
   const handleFilterSearch = () => {
     const params = new URLSearchParams();
 
@@ -149,14 +142,14 @@ export default function AdvancedMovieFilter({
     });
   };
 
-  // Remove selected genre
+
   const handleRemoveGenre = (slug: string) => {
     setSelectedGenres((current) =>
       current.filter((genre) => genre.slug !== slug)
     );
   };
 
-  // Reset selected type
+
   const handleRemoveType = () => {
     setSelectedType(movieTypes[0]);
   };
@@ -164,7 +157,7 @@ export default function AdvancedMovieFilter({
   return (
     <div className="mx-2 mb-20 mt-10 w-full rounded-3xl bg-gray-950 p-4 text-white md:mx-20 md:w-auto md:p-6">
 
-      {/* Search */}
+      {/* search */}
       <div className="relative">
 
         <input
@@ -195,7 +188,7 @@ export default function AdvancedMovieFilter({
 
       </div>
 
-      {/* Dropdown filters */}
+      {/* dropdown filters */}
       <div className="mt-6 grid grid-cols-1 items-end gap-4 md:grid-cols-2 lg:grid-cols-3">
 
         {/* Genres */}
@@ -224,7 +217,7 @@ export default function AdvancedMovieFilter({
           )}
         </div>
 
-        {/* Movie type */}
+        {/* movie type */}
         <Dropdown
           label="Type"
           data={movieTypes}
@@ -237,7 +230,7 @@ export default function AdvancedMovieFilter({
           }}
         />
 
-        {/* Items per page */}
+        {/* items per page */}
         <Dropdown
           label="Items per page"
           data={itemsOptions}
@@ -252,7 +245,7 @@ export default function AdvancedMovieFilter({
 
       </div>
 
-      {/* Apply */}
+    
       <div className="mt-5">
         <Button
           onClick={handleFilterSearch}
@@ -262,7 +255,7 @@ export default function AdvancedMovieFilter({
         </Button>
       </div>
 
-      {/* Selected filters */}
+      
       <SelectedFilters
         selectedGenres={selectedGenres}
         selectedType={selectedType.value}

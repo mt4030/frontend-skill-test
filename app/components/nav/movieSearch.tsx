@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { usePathname, useRouter } from 'next/navigation';
 import { Loader2, Search } from 'lucide-react';
-
 import { useMovieSearch } from '@/hooks/useMovies';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,7 +11,6 @@ import { Input } from '@/components/ui/input';
 export function MovieSearch() {
   const pathname = usePathname();
   const router = useRouter();
-
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const [searchTerm, setSearchTerm] = useState('');

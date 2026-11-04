@@ -93,11 +93,7 @@ export function getGenres(): Promise<WatchmodeGenre[]> {
   return watchmodeFetch<WatchmodeGenre[]>('/genres/', {}, 86400);
 }
 
-/**
- * The list endpoint gives us title IDs and basic information.
- * Fetch details only for a small homepage selection so that
- * the existing poster/backdrop design can still work.
- */
+
 export async function getHomeMovies(): Promise<Movie[]> {
   const { titles } = await getTitles({
     limit: 100,

@@ -30,10 +30,8 @@ interface Props {
 export default function ResultsClient({ searchParams }: Props) {
   const router = useRouter();
 
-  // ======================================
-  // URL PARAMETERS
-  // ======================================
 
+///use parameters
   const searchTerm = searchParams.q?.trim() ?? '';
   const isSearchMode = searchTerm.length > 0;
 
@@ -63,20 +61,16 @@ export default function ResultsClient({ searchParams }: Props) {
       ? requestedPage
       : 1;
 
-  // ======================================
-  // INITIAL 100 MOVIES
-  // ======================================
 
+///initial 100 movies
   const {
     data: homeMovies = [],
     isLoading: isHomeLoading,
     isError: isHomeError,
   } = useHomeMovies();
 
-  // ======================================
-  // GENRES
-  // ======================================
 
+///genres
   const {
     data: genres = [],
   } = useMovieGenres();
@@ -85,10 +79,8 @@ export default function ResultsClient({ searchParams }: Props) {
     .filter((genre) => genreIds.includes(genre.id))
     .map((genre) => genre.slug);
 
-  // ======================================
-  // CHECK AVAILABLE GENRE METADATA
-  // ======================================
 
+//check available data from metadata
   const homeHasGenreMetadata =
     homeMovies.length > 0 &&
     homeMovies.every(
@@ -97,10 +89,8 @@ export default function ResultsClient({ searchParams }: Props) {
         Array.isArray(movie.genre_names)
     );
 
-  // ======================================
-  // LOCAL FILTERING
-  // ======================================
 
+//loccal filtring
   const locallyFilteredMovies = useMemo(() => {
     let result = [...homeMovies];
 
@@ -111,7 +101,7 @@ export default function ResultsClient({ searchParams }: Props) {
       );
     }
 
-    // Filter by genre when the homepage data contains genres
+    // Filter by genre 
     if (genreIds.length > 0 && homeHasGenreMetadata) {
       result = result.filter((movie) =>
         genreIds.every((genreId) => {
@@ -140,12 +130,10 @@ export default function ResultsClient({ searchParams }: Props) {
     genres,
   ]);
 
-  // ======================================
-  // REMOTE GENRE FILTER FALLBACK
-  // ======================================
 
-  // If the initial 100 movies don't contain genre metadata,
-  // ask Watchmode to filter its catalogue by genre instead.
+///remote genre fallback
+
+
   const shouldFetchRemoteBrowse =
     !isSearchMode &&
     !isHomeLoading &&
@@ -181,9 +169,7 @@ export default function ResultsClient({ searchParams }: Props) {
     staleTime: 30 * 60 * 1000,
   });
 
-  // ======================================
-  // TITLE SEARCH
-  // ======================================
+///tittle search
 
   const {
     data: searchResults = [],
@@ -199,10 +185,8 @@ export default function ResultsClient({ searchParams }: Props) {
     return movie.type === selectedType;
   });
 
-  // ======================================
-  // BROWSE RESULTS
-  // ======================================
 
+///browser result
   const remoteMovies = remoteMovieData?.titles ?? [];
 
   const browseMovies = shouldFetchRemoteBrowse
@@ -219,8 +203,7 @@ export default function ResultsClient({ searchParams }: Props) {
       ? undefined
       : Math.max(1, Math.ceil(totalResults / itemsPerPage));
 
-  // Local data is paginated in the browser.
-  // Remote data is already paginated by Watchmode.
+
   const displayedMovies = shouldFetchRemoteBrowse
     ? remoteMovies
     : locallyFilteredMovies.slice(
@@ -234,9 +217,8 @@ export default function ResultsClient({ searchParams }: Props) {
       : remoteMovies.length === itemsPerPage
     : currentPage < (totalPages ?? 1);
 
-  // ======================================
-  // LOADING AND ERROR STATES
-  // ======================================
+
+//loading and error status
 
   const isLoading = isSearchMode
     ? isSearchLoading
@@ -250,9 +232,9 @@ export default function ResultsClient({ searchParams }: Props) {
       ? isRemoteError
       : isHomeError;
 
-  // ======================================
-  // PAGINATION NAVIGATION
-  // ======================================
+
+  /// pagination nav
+
 
   const changePage = (page: number) => {
     if (page < 1) return;
@@ -277,9 +259,6 @@ export default function ResultsClient({ searchParams }: Props) {
     router.push(`/products/results?${params.toString()}`);
   };
 
-  // ======================================
-  // RENDER
-  // ======================================
 
   return (
     <main className="mx-auto min-h-screen max-w-7xl p-4">
@@ -322,7 +301,7 @@ export default function ResultsClient({ searchParams }: Props) {
         </div>
       )}
 
-      {/* SEARCH RESULTS */}
+      {/* search resultas */}
 
       {!isLoading && !hasError && isSearchMode && (
         <>
@@ -341,7 +320,7 @@ export default function ResultsClient({ searchParams }: Props) {
                   href={`/products/${movie.id}`}
                   className="group overflow-hidden rounded-xl bg-gray-800 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl hover:shadow-amber-900/30"
                 >
-                  <div className="relative aspect-[2/3] overflow-hidden bg-gray-950">
+                  <div className="relative aspect-2/3 overflow-hidden bg-gray-950">
 
                     {movie.image_url ? (
                       <img
@@ -385,7 +364,7 @@ export default function ResultsClient({ searchParams }: Props) {
         </>
       )}
 
-      {/* BROWSE RESULTS */}
+      {/* browser result */}
 
       {!isLoading && !hasError && !isSearchMode && (
         <>
@@ -406,7 +385,7 @@ export default function ResultsClient({ searchParams }: Props) {
             </div>
           )}
 
-          {/* PAGINATION */}
+          {/* pagination */}
 
           <div className="mt-16 flex items-center justify-center gap-4">
 

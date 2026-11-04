@@ -16,7 +16,7 @@ export function SelectedFilters({
   return (
     <div className="mt-4 space-y-3">
 
-      {/* Selected genres */}
+      {/* select genres */}
       {selectedGenres.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
 
@@ -45,7 +45,7 @@ export function SelectedFilters({
         </div>
       )}
 
-      {/* Selected type */}
+      {/* selected ype */}
       {selectedType !== 'all' && (
         <div className="flex flex-wrap items-center gap-2">
 

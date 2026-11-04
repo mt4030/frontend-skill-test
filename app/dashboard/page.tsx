@@ -3,10 +3,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueries, useQueryClient } from '@tanstack/react-query';
-
 import MovieCard from '../components/movieSection/moviesCard';
 import Loading from '../components/Loading';
-
 import { useMe } from '@/hooks/useMe';
 import { useMoviesContext } from '@/providers/context';
 import { fetchMovieDetails } from '@/lib/api-calls';
@@ -26,14 +24,14 @@ export default function Dashboard() {
     handleBookmark,
   } = useMoviesContext();
 
-  // Redirect unauthenticated users to login
+  //// redirect unauthenticated users to login
   useEffect(() => {
     if (!isUserLoading && !user) {
       router.replace('/login');
     }
   }, [isUserLoading, user, router]);
 
-  // Fetch bookmarked titles
+  //// fetch bookmarked titles
   const bookmarkedQueries = useQueries({
     queries: bookmark.map((id) => ({
       queryKey: ['movie', id],
@@ -42,7 +40,7 @@ export default function Dashboard() {
     })),
   });
 
-  // Fetch favorite titles
+  //// Fetch favorite titles
   const favoriteQueries = useQueries({
     queries: favorite.map((id) => ({
       queryKey: ['movie', id],
@@ -51,7 +49,7 @@ export default function Dashboard() {
     })),
   });
 
-  // Extract successfully loaded movies
+  //// extract successfully loaded movies
   const bookmarkedMovies = bookmarkedQueries
     .map((query) => query.data)
     .filter((movie): movie is Movie => movie !== undefined);
@@ -60,7 +58,7 @@ export default function Dashboard() {
     .map((query) => query.data)
     .filter((movie): movie is Movie => movie !== undefined);
 
-  // Loading states
+  //// loading states
   const isBookmarksLoading = bookmarkedQueries.some(
     (query) => query.isPending
   );
@@ -69,7 +67,7 @@ export default function Dashboard() {
     (query) => query.isPending
   );
 
-  // Logout
+  //// logout
   const handleLogout = () => {
     localStorage.removeItem('token');
 
@@ -78,7 +76,7 @@ export default function Dashboard() {
     router.replace('/');
   };
 
-  // Authentication loading or redirect
+  // authentication loading or redirect
   if (isUserLoading || !user) {
     return <Loading />;
   }
@@ -86,7 +84,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col md:flex-row">
 
-      {/* Sidebar */}
+      {/* sidebar */}
       <aside className="w-full md:w-60 bg-gray-950 p-6 shrink-0 flex flex-col justify-between md:pb-25">
 
         <div>
@@ -120,7 +118,7 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="flex-1 p-6 space-y-10">
 
-        {/* Watchlist */}
+        {/* watchlist */}
         <section>
 
           <div className="flex justify-between items-center mb-4">
@@ -171,7 +169,7 @@ export default function Dashboard() {
 
         </section>
 
-        {/* Favorites */}
+        {/* favorites */}
         <section>
 
           <div className="flex justify-between items-center mb-4">

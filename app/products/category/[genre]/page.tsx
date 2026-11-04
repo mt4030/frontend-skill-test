@@ -1,12 +1,9 @@
 
 'use client';
-
 import { use, useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-
 import MovieCard from '@/app/components/movieSection/moviesCard';
 import Loading from '@/app/components/Loading';
-
 import { useMovieGenres } from '@/hooks/useMovies';
 import { fetchMovies } from '@/lib/api-calls';
 
@@ -21,19 +18,19 @@ export default function GenrePage({ params }: PageProps) {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Fetch Watchmode genres
+  //// fetch Watchmode genres
   const {
     data: genres = [],
     isLoading: isGenresLoading,
     isError: isGenresError,
   } = useMovieGenres();
 
-  // Find the selected genre using its slug
+  //// find the selected genre 
   const selectedGenre = genres.find(
     (item) => item.slug === genreSlug
   );
 
-  // Fetch titles belonging to that genre
+  //// fetch title belongs to genre
   const {
     data,
     isLoading: isMoviesLoading,
@@ -60,12 +57,12 @@ export default function GenrePage({ params }: PageProps) {
 
   const movies = data?.titles ?? [];
 
-  // Reset pagination when the genre changes
+  /// reset pagination when the genre changes
   useEffect(() => {
     setCurrentPage(1);
   }, [genreSlug]);
 
-  // Scroll to top after changing pages
+  //// Scroll to top 
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -95,7 +92,7 @@ export default function GenrePage({ params }: PageProps) {
     }
   };
 
-  // Genre loading
+
   if (isGenresLoading) {
     return <Loading />;
   }
@@ -108,7 +105,7 @@ export default function GenrePage({ params }: PageProps) {
     );
   }
 
-  // Invalid genre
+
   if (!selectedGenre) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-900 text-white">
@@ -132,18 +129,16 @@ export default function GenrePage({ params }: PageProps) {
 
       </div>
 
-      {/* Loading */}
-      {isMoviesLoading && <Loading />}
 
-      {/* Error */}
+      {isMoviesLoading && <Loading />}
+    
       {isMoviesError && (
         <p className="text-center text-red-400">
           Failed to load titles. Please try again.
         </p>
       )}
 
-      {/* Results */}
-      {!isMoviesLoading && !isMoviesError && (
+        {!isMoviesLoading && !isMoviesError && (
         <>
           {movies.length === 0 ? (
             <p className="py-16 text-center text-gray-400">
@@ -160,7 +155,7 @@ export default function GenrePage({ params }: PageProps) {
             </div>
           )}
 
-          {/* Pagination */}
+        
           <div className="mt-16 flex items-center justify-center gap-4">
 
             <button

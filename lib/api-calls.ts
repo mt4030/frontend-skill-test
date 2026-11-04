@@ -11,20 +11,17 @@ import type {
   WatchmodeListResponse,
 } from '@/lib/type';
 
-// ======================================
-// HOMEPAGE
-// ======================================
 
+
+
+///homepage
 export async function fetchHomeMovies(): Promise<Movie[]> {
   const response = await axios.get<Movie[]>('/api/home');
 
   return response.data;
 }
 
-// ======================================
-// MOVIE LIST
-// ======================================
-
+///movielist
 export async function fetchMovies(
   params: MovieListParams = {}
 ): Promise<WatchmodeListResponse> {
@@ -38,9 +35,7 @@ export async function fetchMovies(
   return response.data;
 }
 
-// ======================================
-// LIVE SEARCH
-// ======================================
+///live search
 
 export async function searchMoviesLive(
   input: string
@@ -69,9 +64,7 @@ export async function searchMoviesLive(
   }));
 }
 
-// ======================================
-// MOVIE DETAILS
-// ======================================
+///movie details
 
 export async function fetchMovieDetails(
   id: number

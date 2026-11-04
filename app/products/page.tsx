@@ -13,7 +13,7 @@ const ITEMS_PER_PAGE = 20;
 export default function Products() {
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Reuse the initial 100 movies fetched for the homepage.
+  //// reuse the initial 100 move fetched for the homepage
   const {
     data: movies = [],
     isLoading,
@@ -22,7 +22,7 @@ export default function Products() {
     refetch,
   } = useHomeMovies();
 
-  // Calculate pagination from the actual fetched collection.
+  //// calculate pagination 
   const totalPages = Math.max(
     1,
     Math.ceil(movies.length / ITEMS_PER_PAGE)
@@ -30,7 +30,7 @@ export default function Products() {
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
 
-  // Display only 20 movies on the current page.
+  //// Display only 20 movies 
   const currentMovies = movies.slice(
     startIndex,
     startIndex + ITEMS_PER_PAGE
@@ -38,7 +38,7 @@ export default function Products() {
 
   const hasNextPage = currentPage < totalPages;
 
-  // Scroll to top when the page changes.
+  /// scroll to top when the page changes
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -83,7 +83,7 @@ export default function Products() {
   return (
     <section className="min-h-screen bg-gray-900 px-6 pb-20 pt-20 lg:px-20">
 
-      {/* Heading */}
+   
       <div className="mb-8">
         <h1 className="text-3xl font-bold capitalize text-amber-50">
           All Movies & TV Shows
@@ -94,7 +94,7 @@ export default function Products() {
         </p>
       </div>
 
-      {/* Movies grid */}
+    
       {currentMovies.length === 0 ? (
         <div className="py-20 text-center text-gray-400">
           No movies or TV shows found.
@@ -112,7 +112,7 @@ export default function Products() {
         </div>
       )}
 
-      {/* Pagination */}
+      {/* paginate */}
       {movies.length > ITEMS_PER_PAGE && (
         <div className="flex items-center justify-center gap-4">
 

@@ -1,14 +1,10 @@
 import type { ReactNode } from 'react';
-
 import { Geist, Geist_Mono } from 'next/font/google';
 import { ToastContainer } from 'react-toastify';
-
 import { MovieProvider } from '@/providers/context';
 import QueryProvider from '@/providers/query-provider';
-
 import NavBar from './components/nav/navbar';
 import Footer from './components/footer';
-
 import './globals.css';
 import 'react-toastify/dist/ReactToastify.css';
 

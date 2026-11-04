@@ -29,14 +29,14 @@ export default function ProductPage({ params }: ProductPageProps) {
   const isValidId =
     Number.isSafeInteger(movieId) && movieId > 0;
 
-  // Fetch movie details through TanStack Query
+  /// fetch movie details through tanstack
   const {
     data: movie,
     isLoading,
     isError,
   } = useMovieDetails(isValidId ? movieId : undefined);
 
-  // Favorites and watchlist only
+
   const {
     handleBookmark,
     handleFavorite,
@@ -62,7 +62,6 @@ export default function ProductPage({ params }: ProductPageProps) {
 
   const isFavorited = favorite.includes(movie.id);
   const isBookmarked = bookmark.includes(movie.id);
-
   const backdrop = movie.backdrop || movie.poster;
   const poster = movie.poster || movie.backdrop;
 
@@ -71,7 +70,7 @@ export default function ProductPage({ params }: ProductPageProps) {
   return (
     <main className="relative min-h-screen overflow-hidden bg-gray-900 pb-16 text-white">
 
-      {/* Backdrop */}
+
       <div className="relative h-[50vh] w-full overflow-hidden bg-gray-950">
         {backdrop && (
           <img
@@ -84,12 +83,12 @@ export default function ProductPage({ params }: ProductPageProps) {
         <div className="absolute inset-0 bg-linear-to-t from-gray-900 via-black/60 to-black/20" />
       </div>
 
-      {/* Movie information */}
+  
       <div className="relative z-10 mx-auto -mt-32 max-w-6xl px-4 md:-mt-60">
 
         <div className="flex flex-col gap-8 md:flex-row md:gap-10">
 
-          {/* Poster */}
+     
           <div className="w-full shrink-0 md:w-80 lg:w-96">
 
             {poster ? (
@@ -106,7 +105,7 @@ export default function ProductPage({ params }: ProductPageProps) {
 
           </div>
 
-          {/* Details */}
+      
           <div className="flex flex-1 flex-col gap-5">
 
             <div>
@@ -122,7 +121,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                 )}
             </div>
 
-            {/* Release information */}
+     
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-300">
 
               <span className="flex items-center gap-2">
@@ -137,7 +136,7 @@ export default function ProductPage({ params }: ProductPageProps) {
 
             </div>
 
-            {/* Ratings and type */}
+       
             <div className="flex flex-wrap gap-6 text-sm text-gray-300">
 
               {movie.user_rating != null && (
@@ -173,7 +172,7 @@ export default function ProductPage({ params }: ProductPageProps) {
 
             </div>
 
-            {/* Genres */}
+       
             {movie.genre_names && movie.genre_names.length > 0 && (
               <div className="flex flex-wrap gap-2">
 
@@ -189,7 +188,7 @@ export default function ProductPage({ params }: ProductPageProps) {
               </div>
             )}
 
-            {/* Plot */}
+         
             <div className="mt-2">
 
               <h2 className="mb-3 text-xl font-bold">
@@ -203,7 +202,7 @@ export default function ProductPage({ params }: ProductPageProps) {
 
             </div>
 
-            {/* Review summary */}
+   
             {movie.review_summary && (
               <div>
                 <h2 className="mb-2 text-xl font-bold">
@@ -216,7 +215,7 @@ export default function ProductPage({ params }: ProductPageProps) {
               </div>
             )}
 
-            {/* Favorite and watchlist */}
+       
             <div className="mt-4 flex flex-wrap gap-4">
 
               <button

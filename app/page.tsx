@@ -1,5 +1,4 @@
 'use client';
-
 import { useHomeMovies } from '@/hooks/useMovies';
 import HeroSection from './components/heroSection/herosection';
 import MovieList from './components/movieSection/movielist';

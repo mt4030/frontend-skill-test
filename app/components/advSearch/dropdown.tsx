@@ -120,7 +120,7 @@ export default function Dropdown<T extends DropdownItem>({
 
           <ListboxOptions className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-gray-900 border border-gray-700 p-1 focus:outline-none">
 
-            {/* Search Input */}
+            {/* search input */}
             <div className="px-3 py-2">
               <input
                 type="text"
@@ -131,7 +131,7 @@ export default function Dropdown<T extends DropdownItem>({
               />
             </div>
 
-            {/* Select All / Deselect All */}
+            {/* de/select all */}
             {multiple && (
               <div
                 className="px-3 py-2 cursor-pointer text-sm text-gray-400 hover:bg-gray-700"
@@ -141,7 +141,7 @@ export default function Dropdown<T extends DropdownItem>({
               </div>
             )}
 
-            {/* Options */}
+            {/* options */}
             {filteredData.map((item) => (
               <ListboxOption
                 key={item.id ?? item.name}

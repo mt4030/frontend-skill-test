@@ -1,16 +1,13 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-
 import type { Movie, MovieGenre } from '@/lib/type';
-
 export interface MovieFilters {
   searchTerm: string;
   selectedGenres: MovieGenre[];
   selectedType: 'all' | 'movie' | 'tv_series';
   itemsPerPage: number;
 }
-
 export function useMovieFilters(
   movies: Movie[],
   initialValues: Partial<MovieFilters> = {}
@@ -25,7 +22,7 @@ export function useMovieFilters(
   const filteredMovies = useMemo(() => {
     let result = [...movies];
 
-    // Search by title
+    /// search by title
     const searchTerm = filters.searchTerm.trim().toLowerCase();
 
     if (searchTerm) {
@@ -34,7 +31,7 @@ export function useMovieFilters(
       );
     }
 
-    // Filter by selected genres
+    //// filter by selected genres
     if (filters.selectedGenres.length > 0) {
       result = result.filter((movie) =>
         filters.selectedGenres.every(
@@ -45,14 +42,14 @@ export function useMovieFilters(
       );
     }
 
-    // Filter by title type
+    /// filter by title type
     if (filters.selectedType !== 'all') {
       result = result.filter(
         (movie) => movie.type === filters.selectedType
       );
     }
 
-    // Limit results
+    //// limit results
     return result.slice(
       0,
       Math.max(1, filters.itemsPerPage)
