@@ -16,7 +16,7 @@ import { useMovieDetails } from '@/hooks/useMovies';
 import { useMoviesContext } from '@/providers/context';
 
 import MovieError from './movieError';
-
+import AppImage from '@/app/components/AppImage';
 interface ProductPageProps {
   params: Promise<{ id: string }>;
 }
@@ -71,17 +71,16 @@ export default function ProductPage({ params }: ProductPageProps) {
     <main className="relative min-h-screen overflow-hidden bg-gray-900 pb-16 text-white">
 
 
-      <div className="relative h-[50vh] w-full overflow-hidden bg-gray-950">
-        {backdrop && (
-          <img
-            src={backdrop}
-            alt={movie.title}
-            className="h-full w-full object-cover"
-          />
-        )}
+    <div className="relative h-[50vh] w-full overflow-hidden bg-gray-950">
+  <AppImage
+    src={movie.backdrop || movie.poster}
+    aspect="landscape"
+    alt={movie.title}
+    className="h-full w-full object-cover"
+  />
 
-        <div className="absolute inset-0 bg-linear-to-t from-gray-900 via-black/60 to-black/20" />
-      </div>
+  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-black/60 to-black/20" />
+</div>
 
   
       <div className="relative z-10 mx-auto -mt-32 max-w-6xl px-4 md:-mt-60">
@@ -89,22 +88,14 @@ export default function ProductPage({ params }: ProductPageProps) {
         <div className="flex flex-col gap-8 md:flex-row md:gap-10">
 
      
-          <div className="w-full shrink-0 md:w-80 lg:w-96">
-
-            {poster ? (
-              <img
-                src={poster}
-                alt={movie.title}
-                className="mx-auto max-h-[550px] w-full rounded-xl object-cover shadow-2xl"
-              />
-            ) : (
-              <div className="flex h-96 items-center justify-center rounded-xl bg-gray-800 text-center text-gray-400">
-                {movie.title}
-              </div>
-            )}
-
-          </div>
-
+         <div className="w-full shrink-0 md:w-80 lg:w-96">
+  <AppImage
+    src={movie.poster || movie.backdrop}
+    aspect="portrait"
+    alt={movie.title}
+    className="mx-auto max-h-[550px] w-full rounded-xl object-cover shadow-2xl"
+  />
+</div>
       
           <div className="flex flex-1 flex-col gap-5">
 

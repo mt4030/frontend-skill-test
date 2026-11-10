@@ -3,6 +3,8 @@ import { Bookmark, Heart } from 'lucide-react';
 
 import { Card, CardContent } from '@/components/ui/card';
 import type { MovieCardProps } from '@/lib/type';
+import ImageFallback from '../AppImage';
+import { useState } from 'react';
 
 const MovieCard = ({
   movie,
@@ -11,6 +13,7 @@ const MovieCard = ({
   onFavorite,
   onBookmark,
 }: MovieCardProps) => {
+  const [imageError, setImageError] = useState(false);
   const image = movie.poster || movie.backdrop;
 
   return (
@@ -19,18 +22,20 @@ const MovieCard = ({
         <Link href={`/products/${movie.id}`}>
           <CardContent className="relative p-0">
             <div className="relative h-60 md:h-80 w-full bg-gray-800">
-              {image ? (
-                <img
-                  src={image}
-                  alt={movie.title}
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center p-4 text-center text-gray-400">
-                  {movie.title}
-                </div>
-              )}
-
+             {!image || imageError ? (
+  <ImageFallback
+    aspect="portrait"
+    alt={movie.title}
+    className="h-full w-full object-cover"
+  />
+) : (
+  <img
+    src={image}
+    alt={movie.title}
+    onError={() => setImageError(true)}
+    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+  />
+)}
               <div className="absolute inset-0 bg-linear-to-t from-black/90 via-transparent to-black/10" />
 
               {movie.user_rating != null && (
